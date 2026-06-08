@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✨ Trivia Disney - Maite, Isidora y Mamá ✨</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a40 0%, #4b0082 50%, #7b2ff7 100%);
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+  .stars {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+      radial-gradient(2px 2px at 140px 80px, #fff, transparent),
+      radial-gradient(1px 1px at 220px 50px, #ffd, transparent),
+      radial-gradient(2px 2px at 300px 120px, #fff, transparent),
+      radial-gradient(1px 1px at 380px 200px, #fff, transparent),
+      radial-gradient(2px 2px at 80px 250px, #ffd, transparent);
+    background-size: 400px 300px;
+    opacity: 0.5;
+    animation: twinkle 4s infinite alternate;
+  }
+  @keyframes twinkle { from { opacity: 0.3; } to { opacity: 0.7; } }
+  .card {
+    position: relative; z-index: 1;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    width: 100%;
+    max-width: 640px;
+    padding: 32px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.9rem;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+  }
+  .subtitle { text-align: center; opacity: 0.85; margin-bottom: 24px; font-size: 0.95rem; }
+  .players-setup { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+  .player-chip {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.1);
+    padding: 12px 16px; border-radius: 14px;
+  }
+  .player-chip .emoji { font-size: 1.6rem; }
+  .player-chip .name { font-weight: bold; font-size: 1.1rem; flex: 1; }
+  button {
+    font-family: inherit; cursor: pointer; border: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  button:active { transform: scale(0.97); }
+  .btn-primary {
+    width: 100%; padding: 16px; font-size: 1.1rem; font-weight: bold;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #1a1a40; border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255,140,0,0.55); }
+  .turn-banner {
+    text-align: center; font-size: 1.2rem; font-weight: bold;
+    padding: 12px; border-radius: 14px; margin-bottom: 16px;
+    background: rgba(255,255,255,0.12);
+  }
+  .progress { text-align: center; opacity: 0.8; margin-bottom: 14px; font-size: 0.9rem; }
+  .question { font-size: 1.25rem; line-height: 1.4; margin-bottom: 22px; text-align: center; min-height: 64px; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option {
+    padding: 15px 18px; font-size: 1.02rem; text-align: left;
+    background: rgba(255,255,255,0.12); color: #fff;
+    border-radius: 14px; border: 2px solid transparent;
+  }
+  .option:hover { background: rgba(255,255,255,0.22); }
+  .option.correct { background: #2ecc71; border-color: #fff; }
+  .option.wrong { background: #e74c3c; border-color: #fff; }
+  .option:disabled { cursor: default; }
+  .scores { display: flex; justify-content: space-around; margin-bottom: 18px; gap: 8px; }
+  .score-box {
+    flex: 1; text-align: center; padding: 10px 6px; border-radius: 12px;
+    background: rgba(255,255,255,0.1); font-size: 0.85rem;
+  }
+  .score-box.active { background: rgba(255,215,0,0.3); box-shadow: 0 0 0 2px #ffd700; }
+  .score-box .pts { font-size: 1.4rem; font-weight: bold; display: block; }
+  .next-btn {
+    margin-top: 20px; width: 100%; padding: 14px; font-size: 1rem; font-weight: bold;
+    background: rgba(255,255,255,0.2); color: #fff; border-radius: 12px;
+  }
+  .next-btn:hover { background: rgba(255,255,255,0.32); }
+  .hidden { display: none; }
+  .feedback { text-align: center; margin-top: 16px; font-size: 1.05rem; min-height: 26px; font-weight: bold; }
+  .winner { text-align: center; }
+  .winner .crown { font-size: 4rem; animation: bounce 1s infinite alternate; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+  .winner h2 { font-size: 2rem; margin: 10px 0; color: #ffd700; text-shadow: 0 2px 12px rgba(255,215,0,0.6); }
+  .final-scores { margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
+  .final-row {
+    display: flex; justify-content: space-between; padding: 12px 18px;
+    border-radius: 12px; background: rgba(255,255,255,0.1); font-size: 1.1rem;
+  }
+  .final-row.first { background: linear-gradient(135deg, #ffd700, #ff8c00); color: #1a1a40; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="card">
+
+  <!-- PANTALLA DE INICIO -->
+  <div id="start-screen">
+    <h1>✨ Trivia Mágica de Disney ✨</h1>
+    <p class="subtitle">10 preguntas · 3 jugadoras · ¡que gane la mejor!</p>
+    <div class="players-setup">
+      <div class="player-chip"><span class="emoji">👧</span><span class="name">Maite</span></div>
+      <div class="player-chip"><span class="emoji">🧒</span><span class="name">Isidora</span></div>
+      <div class="player-chip"><span class="emoji">👑</span><span class="name">Mamá</span></div>
+    </div>
+    <p class="subtitle">Por turnos: cada una responde su pregunta. ¡Suma puntos por cada acierto!</p>
+    <button class="btn-primary" onclick="startGame()">🎬 ¡Empezar la trivia!</button>
+  </div>
+
+  <!-- PANTALLA DE JUEGO -->
+  <div id="game-screen" class="hidden">
+    <div class="scores" id="scores"></div>
+    <div class="turn-banner" id="turn-banner"></div>
+    <div class="progress" id="progress"></div>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn hidden" id="next-btn" onclick="nextQuestion()">Siguiente ➜</button>
+  </div>
+
+  <!-- PANTALLA FINAL -->
+  <div id="end-screen" class="hidden">
+    <div class="winner">
+      <div class="crown">👑</div>
+      <h2 id="winner-text"></h2>
+    </div>
+    <div class="final-scores" id="final-scores"></div>
+    <button class="btn-primary" onclick="restart()">🔄 Jugar de nuevo</button>
+  </div>
+
+</div>
+
+<script>
+  const players = [
+    { name: "Maite", emoji: "👧", score: 0 },
+    { name: "Isidora", emoji: "🧒", score: 0 },
+    { name: "Mamá", emoji: "👑", score: 0 }
+  ];
+
+  const questions = [
+    {
+      q: "¿Cómo se llama el muñeco de nieve en 'Frozen'?",
+      options: ["Olaf", "Sven", "Kristoff", "Hans"],
+      answer: 0
+    },
+    {
+      q: "¿Qué pez payaso es el protagonista de 'Buscando a Nemo'?",
+      options: ["Dory", "Nemo", "Marlin", "Bruno"],
+      answer: 1
+    },
+    {
+      q: "En 'La Sirenita', ¿cómo se llama la protagonista?",
+      options: ["Aurora", "Bella", "Ariel", "Jasmín"],
+      answer: 2
+    },
+    {
+      q: "¿Qué animal es Simba en 'El Rey León'?",
+      options: ["Un tigre", "Un leopardo", "Una pantera", "Un león"],
+      answer: 3
+    },
+    {
+      q: "En 'Toy Story', ¿quién es el vaquero de juguete?",
+      options: ["Woody", "Buzz", "Rex", "Hamm"],
+      answer: 0
+    },
+    {
+      q: "¿De qué color es el vestido de Cenicienta en el baile?",
+      options: ["Rosado", "Celeste / azul", "Amarillo", "Rojo"],
+      answer: 1
+    },
+    {
+      q: "En 'Moana' (Vaiana), ¿quién es el semidiós que la acompaña?",
+      options: ["Mufasa", "Hércules", "Maui", "Tarzán"],
+      answer: 2
+    },
+    {
+      q: "¿Cómo se llama la mascota de Rapunzel en 'Enredados'?",
+      options: ["Maximus", "Flynn", "Mushu", "Pascal"],
+      answer: 3
+    },
+    {
+      q: "En 'Encanto', ¿de qué país es la familia Madrigal?",
+      options: ["Colombia", "México", "Brasil", "Perú"],
+      answer: 0
+    },
+    {
+      q: "¿Quién es la princesa que duerme por un hechizo en 'La Bella Durmiente'?",
+      options: ["Blancanieves", "Aurora", "Mérida", "Tiana"],
+      answer: 1
+    }
+  ];
+
+  let current = 0;
+  let answered = false;
+
+  function startGame() {
+    document.getElementById("start-screen").classList.add("hidden");
+    document.getElementById("game-screen").classList.remove("hidden");
+    current = 0;
+    players.forEach(p => p.score = 0);
+    renderQuestion();
+  }
+
+  function renderScores() {
+    const box = document.getElementById("scores");
+    const turnIdx = current % players.length;
+    box.innerHTML = players.map((p, i) =>
+      `<div class="score-box ${i === turnIdx ? 'active' : ''}">
+         ${p.emoji} ${p.name}
+         <span class="pts">${p.score}</span>
+       </div>`
+    ).join("");
+  }
+
+  function renderQuestion() {
+    answered = false;
+    const turnIdx = current % players.length;
+    const player = players[turnIdx];
+    const item = questions[current];
+
+    renderScores();
+    document.getElementById("turn-banner").textContent = `${player.emoji} ¡Turno de ${player.name}!`;
+    document.getElementById("progress").textContent = `Pregunta ${current + 1} de ${questions.length}`;
+    document.getElementById("question").textContent = item.q;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("next-btn").classList.add("hidden");
+
+    const opts = document.getElementById("options");
+    opts.innerHTML = "";
+    item.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.textContent = opt;
+      btn.onclick = () => selectAnswer(i, btn);
+      opts.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(i, btn) {
+    if (answered) return;
+    answered = true;
+    const item = questions[current];
+    const turnIdx = current % players.length;
+    const player = players[turnIdx];
+    const buttons = document.querySelectorAll(".option");
+
+    buttons.forEach((b, idx) => {
+      b.disabled = true;
+      if (idx === item.answer) b.classList.add("correct");
+    });
+
+    const fb = document.getElementById("feedback");
+    if (i === item.answer) {
+      player.score++;
+      fb.textContent = `✅ ¡Correcto, ${player.name}! +1 punto`;
+    } else {
+      btn.classList.add("wrong");
+      fb.textContent = `❌ ¡Casi, ${player.name}! La respuesta correcta está marcada.`;
+    }
+
+    renderScores();
+    const nextBtn = document.getElementById("next-btn");
+    nextBtn.textContent = current + 1 < questions.length ? "Siguiente ➜" : "Ver resultado 🏆";
+    nextBtn.classList.remove("hidden");
+  }
+
+  function nextQuestion() {
+    current++;
+    if (current < questions.length) {
+      renderQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function showResults() {
+    document.getElementById("game-screen").classList.add("hidden");
+    document.getElementById("end-screen").classList.remove("hidden");
+
+    const sorted = [...players].sort((a, b) => b.score - a.score);
+    const top = sorted[0].score;
+    const winners = sorted.filter(p => p.score === top);
+
+    const winnerText = document.getElementById("winner-text");
+    if (winners.length === 1) {
+      winnerText.textContent = `¡${winners[0].name} es la reina de Disney! 🎉`;
+    } else {
+      winnerText.textContent = `¡Empate entre ${winners.map(w => w.name).join(" y ")}! 🎉`;
+    }
+
+    document.getElementById("final-scores").innerHTML = sorted.map((p, i) =>
+      `<div class="final-row ${i === 0 ? 'first' : ''}">
+         <span>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${p.emoji} ${p.name}</span>
+         <span>${p.score} / ${questions.length} pts</span>
+       </div>`
+    ).join("");
+  }
+
+  function restart() {
+    document.getElementById("end-screen").classList.add("hidden");
+    document.getElementById("start-screen").classList.remove("hidden");
+  }
+</script>
+</body>
+</html>
