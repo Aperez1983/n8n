@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>✨ Trivia Disney - Maite, Isidora y Mamá ✨</title>
+<title>✨ Trivia Disney Experta - Maite, Isidora y Mamá ✨</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -44,12 +44,12 @@
   }
   h1 {
     text-align: center;
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     margin-bottom: 8px;
     text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
   }
-  .subtitle { text-align: center; opacity: 0.85; margin-bottom: 24px; font-size: 0.95rem; }
-  .players-setup { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+  .subtitle { text-align: center; opacity: 0.85; margin-bottom: 22px; font-size: 0.95rem; }
+  .players-setup { display: flex; flex-direction: column; gap: 14px; margin-bottom: 22px; }
   .player-chip {
     display: flex; align-items: center; gap: 12px;
     background: rgba(255,255,255,0.1);
@@ -70,15 +70,15 @@
   }
   .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255,140,0,0.55); }
   .turn-banner {
-    text-align: center; font-size: 1.2rem; font-weight: bold;
+    text-align: center; font-size: 1.15rem; font-weight: bold;
     padding: 12px; border-radius: 14px; margin-bottom: 16px;
     background: rgba(255,255,255,0.12);
   }
   .progress { text-align: center; opacity: 0.8; margin-bottom: 14px; font-size: 0.9rem; }
-  .question { font-size: 1.25rem; line-height: 1.4; margin-bottom: 22px; text-align: center; min-height: 64px; }
+  .question { font-size: 1.18rem; line-height: 1.4; margin-bottom: 22px; text-align: center; min-height: 64px; }
   .options { display: flex; flex-direction: column; gap: 12px; }
   .option {
-    padding: 15px 18px; font-size: 1.02rem; text-align: left;
+    padding: 15px 18px; font-size: 1.0rem; text-align: left;
     background: rgba(255,255,255,0.12); color: #fff;
     border-radius: 14px; border: 2px solid transparent;
   }
@@ -100,10 +100,15 @@
   .next-btn:hover { background: rgba(255,255,255,0.32); }
   .hidden { display: none; }
   .feedback { text-align: center; margin-top: 16px; font-size: 1.05rem; min-height: 26px; font-weight: bold; }
+  /* Interstitial / pase de turno */
+  .inter { text-align: center; }
+  .inter .big-emoji { font-size: 4.5rem; animation: bounce 1s infinite alternate; }
+  .inter h2 { font-size: 1.7rem; margin: 14px 0 6px; color: #ffd700; text-shadow: 0 2px 12px rgba(255,215,0,0.6); }
+  .inter p { opacity: 0.9; margin-bottom: 22px; font-size: 1.02rem; line-height: 1.4; }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
   .winner { text-align: center; }
   .winner .crown { font-size: 4rem; animation: bounce 1s infinite alternate; }
-  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
-  .winner h2 { font-size: 2rem; margin: 10px 0; color: #ffd700; text-shadow: 0 2px 12px rgba(255,215,0,0.6); }
+  .winner h2 { font-size: 1.9rem; margin: 10px 0; color: #ffd700; text-shadow: 0 2px 12px rgba(255,215,0,0.6); }
   .final-scores { margin: 20px 0; display: flex; flex-direction: column; gap: 10px; }
   .final-row {
     display: flex; justify-content: space-between; padding: 12px 18px;
@@ -118,15 +123,25 @@
 
   <!-- PANTALLA DE INICIO -->
   <div id="start-screen">
-    <h1>✨ Trivia Mágica de Disney ✨</h1>
-    <p class="subtitle">10 preguntas · 3 jugadoras · ¡que gane la mejor!</p>
+    <h1>✨ Trivia Disney · Nivel Experto ✨</h1>
+    <p class="subtitle">50 preguntas difíciles · cada jugadora responde sus 10, una detrás de la otra</p>
     <div class="players-setup">
       <div class="player-chip"><span class="emoji">👧</span><span class="name">Maite</span></div>
       <div class="player-chip"><span class="emoji">🧒</span><span class="name">Isidora</span></div>
       <div class="player-chip"><span class="emoji">👑</span><span class="name">Mamá</span></div>
     </div>
-    <p class="subtitle">Por turnos: cada una responde su pregunta. ¡Suma puntos por cada acierto!</p>
+    <p class="subtitle">Cada partida elige 30 preguntas al azar del banco de 50. ¡Que gane la verdadera fan!</p>
     <button class="btn-primary" onclick="startGame()">🎬 ¡Empezar la trivia!</button>
+  </div>
+
+  <!-- PANTALLA DE PASE DE TURNO -->
+  <div id="inter-screen" class="hidden">
+    <div class="inter">
+      <div class="big-emoji" id="inter-emoji">👧</div>
+      <h2 id="inter-title"></h2>
+      <p id="inter-text"></p>
+      <button class="btn-primary" id="inter-btn" onclick="beginPlayerRound()">▶️ Comenzar mis 10 preguntas</button>
+    </div>
   </div>
 
   <!-- PANTALLA DE JUEGO -->
@@ -153,81 +168,122 @@
 </div>
 
 <script>
+  const QUESTIONS_PER_PLAYER = 10;
+
   const players = [
     { name: "Maite", emoji: "👧", score: 0 },
     { name: "Isidora", emoji: "🧒", score: 0 },
     { name: "Mamá", emoji: "👑", score: 0 }
   ];
 
-  const questions = [
-    {
-      q: "En 'La Bella Durmiente' (doblaje latino), las tres hadas buenas son Flora, Fauna y... ¿cuál es la tercera?",
-      options: ["Primavera", "Madreselva", "Azucena", "Margarita"],
-      answer: 0
-    },
-    {
-      q: "En 'Frozen', ¿cuál es el nombre completo del Reino donde gobiernan Elsa y Anna?",
-      options: ["Corona", "Arendelle", "Weselton", "Atohallan"],
-      answer: 1
-    },
-    {
-      q: "En 'El Rey León', ¿qué especie de ave es Zazú, el mayordomo del rey?",
-      options: ["Un tucán", "Un cálao piquirrojo", "Un pelícano", "Una cacatúa"],
-      answer: 1
-    },
-    {
-      q: "En 'La Sirenita', ¿cuántas hermanas mayores tiene Ariel?",
-      options: ["Cinco", "Tres", "Seis", "Siete"],
-      answer: 2
-    },
-    {
-      q: "En 'Encanto', ¿cuál es el don (poder) de Luisa Madrigal?",
-      options: ["Súper fuerza", "Controlar las flores", "Oír todo", "Predecir el futuro"],
-      answer: 0
-    },
-    {
-      q: "En 'Toy Story', ¿qué número de serie / qué dice la suela del pie de Woody?",
-      options: ["'Buzz'", "'Andy'", "'Sid'", "'Bo'"],
-      answer: 1
-    },
-    {
-      q: "En 'Enredados' (Rapunzel), ¿cómo se llama de verdad el ladrón Flynn Rider?",
-      options: ["Eugene Fitzherbert", "Phillip Andrews", "Hans Westergaard", "Naveen"],
-      answer: 0
-    },
-    {
-      q: "En 'Moana' (Vaiana), ¿cómo se llama el gigantesco cangrejo coleccionista del reino de Lalotai?",
-      options: ["Te Fiti", "Tamatoa", "Maui", "Heihei"],
-      answer: 1
-    },
-    {
-      q: "En 'La Bella y la Bestia', ¿cómo se llama el reloj de pie que es mayordomo del castillo?",
-      options: ["Lumière", "Din Don (Cogsworth)", "Chip", "Maurice"],
-      answer: 1
-    },
-    {
-      q: "En 'Aladdín', cuando el Genio sale por primera vez de la lámpara, ¿cuántos años dice que llevaba encerrado?",
-      options: ["100 años", "500 años", "10.000 años", "1.000 años"],
-      answer: 2
-    }
+  // Banco de 50 preguntas difíciles de Disney
+  const questionBank = [
+    { q: "En 'La Bella Durmiente' (doblaje latino), las hadas son Flora, Fauna y... ¿la tercera?", options: ["Primavera", "Madreselva", "Azucena", "Margarita"], answer: 0 },
+    { q: "¿Cuál es el nombre del reino donde gobiernan Elsa y Anna en 'Frozen'?", options: ["Corona", "Arendelle", "Weselton", "DunBroch"], answer: 1 },
+    { q: "¿Qué tipo de ave es Zazú, el mayordomo del rey en 'El Rey León'?", options: ["Un tucán", "Un cálao piquirrojo", "Un pelícano", "Una cacatúa"], answer: 1 },
+    { q: "¿Cuántas hermanas mayores tiene Ariel en 'La Sirenita'?", options: ["Cuatro", "Cinco", "Seis", "Siete"], answer: 2 },
+    { q: "¿Cuál es el don (poder) de Luisa Madrigal en 'Encanto'?", options: ["Súper fuerza", "Curar con la comida", "Oír todo", "Crear flores"], answer: 0 },
+    { q: "¿Qué nombre está escrito en la suela de la bota de Woody en 'Toy Story'?", options: ["Buzz", "Andy", "Sid", "Bonnie"], answer: 1 },
+    { q: "¿Cuál es el verdadero nombre del ladrón Flynn Rider en 'Enredados'?", options: ["Eugene Fitzherbert", "Phillip Andrews", "Naveen", "Hans Westergaard"], answer: 0 },
+    { q: "¿Cómo se llama el cangrejo gigante coleccionista de Lalotai en 'Moana'?", options: ["Te Fiti", "Tamatoa", "Maui", "Heihei"], answer: 1 },
+    { q: "¿Cómo se llama el mayordomo con forma de reloj en 'La Bella y la Bestia'?", options: ["Lumière", "Din Don (Cogsworth)", "Chip", "Maurice"], answer: 1 },
+    { q: "Cuando el Genio sale de la lámpara en 'Aladdín', ¿cuántos años dice que llevaba encerrado?", options: ["100 años", "500 años", "10.000 años", "1.000 años"], answer: 2 },
+    { q: "¿Cómo se llama el caballo del palacio que persigue a Flynn en 'Enredados'?", options: ["Maximus", "Khan", "Philippe", "Samson"], answer: 0 },
+    { q: "¿Cómo se llama el padre de Ariel, el rey del mar?", options: ["Neptuno", "Tritón", "Poseidón", "Eric"], answer: 1 },
+    { q: "¿Cómo se llaman las dos anguilas que sirven a Úrsula en 'La Sirenita'?", options: ["Flotsam y Jetsam", "Shenzi y Banzai", "Jaq y Gus", "Pain y Panic"], answer: 0 },
+    { q: "¿Cómo se llaman las tres hienas aliadas de Scar en 'El Rey León'?", options: ["Shenzi, Banzai y Ed", "Flotsam, Jetsam y Ed", "Timón, Pumba y Ed", "Shenzi, Nala y Ed"], answer: 0 },
+    { q: "¿Qué animal es Pumba, el amigo de Timón en 'El Rey León'?", options: ["Un jabalí (facóquero)", "Un suricato", "Un tejón", "Un oso hormiguero"], answer: 0 },
+    { q: "¿Qué animal es Timón en 'El Rey León'?", options: ["Un suricato", "Una mangosta", "Una ardilla", "Un hurón"], answer: 0 },
+    { q: "En 'Mulán', ¿cómo se llama el pequeño dragón guardián de la familia?", options: ["Mushu", "Sisu", "Cri-Kee", "Khan"], answer: 0 },
+    { q: "¿Cómo se llama el caballo de Mulán?", options: ["Khan", "Maximus", "Angus", "Pegaso"], answer: 0 },
+    { q: "En 'Pocahontas', ¿cómo se llama el mapache que la acompaña?", options: ["Meeko", "Flit", "Percy", "Rajah"], answer: 0 },
+    { q: "En 'Aladdín', ¿cómo se llama el tigre mascota de la princesa Jasmín?", options: ["Rajah", "Shere Khan", "Sahib", "Raja"], answer: 0 },
+    { q: "¿Cómo se llama el loro parlante de Jafar en 'Aladdín'?", options: ["Iago", "Zazú", "Diablo", "Pepe"], answer: 0 },
+    { q: "En 'Hércules', ¿cómo se llama el caballo alado?", options: ["Pegaso", "Maximus", "Khan", "Tiro al Blanco"], answer: 0 },
+    { q: "¿Quién es el villano de 'Hércules', dios del inframundo?", options: ["Hades", "Zeus", "Scar", "Jafar"], answer: 0 },
+    { q: "En 'Tarzán', ¿cómo se llama el elefante amigo de Tarzán?", options: ["Tantor", "Terk", "Hathi", "Dumbo"], answer: 0 },
+    { q: "En 'El Jorobado de Notre Dame', ¿cómo se llama el protagonista?", options: ["Quasimodo", "Frollo", "Febo", "Clopin"], answer: 0 },
+    { q: "En 'La Princesa y el Sapo', ¿cómo se llama la luciérnaga enamorada?", options: ["Ray", "Louis", "Naveen", "Mama Odie"], answer: 0 },
+    { q: "En 'La Princesa y el Sapo', ¿qué instrumento toca el cocodrilo Louis?", options: ["Trompeta", "Saxofón", "Piano", "Trombón"], answer: 0 },
+    { q: "En 'Valiente' (Brave), ¿cómo se llama la princesa pelirroja arquera?", options: ["Mérida", "Rapunzel", "Elinor", "Anna"], answer: 0 },
+    { q: "En 'Valiente', los hermanos trillizos de Mérida son Harris, Hubert y...?", options: ["Hamish", "Hamlet", "Hugo", "Henry"], answer: 0 },
+    { q: "En 'Frozen', ¿cómo se llama el reno de Kristoff?", options: ["Sven", "Olaf", "Marshmallow", "Nokk"], answer: 0 },
+    { q: "En 'Frozen 2', ¿cómo se llama la salamandra mágica de fuego?", options: ["Bruni", "Nokk", "Gale", "Sven"], answer: 0 },
+    { q: "En 'Frozen 2', ¿cómo se llama el espíritu del agua con forma de caballo?", options: ["Nokk", "Bruni", "Gale", "Marshmallow"], answer: 0 },
+    { q: "En 'Frozen 2', ¿cómo se llama el pueblo del bosque encantado?", options: ["Northuldra", "Arendelle", "Corona", "Weselton"], answer: 0 },
+    { q: "En 'Coco', ¿cómo se llama el perro callejero que acompaña a Miguel?", options: ["Dante", "Pepita", "Ernesto", "Chamuco"], answer: 0 },
+    { q: "En 'Coco', ¿cómo se llama el ídolo músico que Miguel admira?", options: ["Ernesto de la Cruz", "Héctor Rivera", "Miguel Rivera", "Juanito"], answer: 0 },
+    { q: "En 'Coco', ¿quién resulta ser el verdadero tatarabuelo músico de Miguel?", options: ["Héctor", "Ernesto", "Franco", "Julio"], answer: 0 },
+    { q: "En 'Encanto', ¿quién es el personaje del que 'no se habla'?", options: ["Bruno", "Camilo", "Félix", "Agustín"], answer: 0 },
+    { q: "En 'Encanto', ¿cómo se llama la abuela de la familia Madrigal?", options: ["Alma", "Pepa", "Julieta", "Dolores"], answer: 0 },
+    { q: "En 'Encanto', ¿cuál es el don de Antonio, el más pequeño?", options: ["Hablar con los animales", "Súper fuerza", "Controlar el clima", "Curar"], answer: 0 },
+    { q: "En 'Encanto', ¿quién es la única Madrigal que no recibió un don mágico?", options: ["Mirabel", "Isabela", "Luisa", "Dolores"], answer: 0 },
+    { q: "En 'Moana' (Vaiana), ¿cómo se llama la abuela de Moana?", options: ["Tala", "Sina", "Te Fiti", "Pua"], answer: 0 },
+    { q: "En 'Moana', ¿qué le robó Maui a la diosa Te Fiti?", options: ["Su corazón (la piedra)", "Su anzuelo mágico", "Su canoa", "Su isla"], answer: 0 },
+    { q: "En 'La Sirenita', ¿cómo se llama el cangrejo músico, consejero del rey?", options: ["Sebastián", "Scuttle", "Flounder", "Louis"], answer: 0 },
+    { q: "En 'La Sirenita', ¿cómo se llama el príncipe humano del que Ariel se enamora?", options: ["Eric", "Felipe", "Naveen", "Adam"], answer: 0 },
+    { q: "En 'La Bella y la Bestia', ¿cómo se llama el candelabro encantado?", options: ["Lumière", "Din Don", "Chip", "Gastón"], answer: 0 },
+    { q: "En 'Blancanieves', ¿cuál de los siete enanitos no habla?", options: ["Tontín", "Gruñón", "Dormilón", "Sabio"], answer: 0 },
+    { q: "En 'Cenicienta', ¿cómo se llama el gato malvado de la madrastra?", options: ["Lucifer", "Lucifurio", "Félix", "Tom"], answer: 0 },
+    { q: "En 'Pinocho', ¿cómo se llama el grillo que es su conciencia?", options: ["Pepito Grillo", "Cri-Kee", "Tambor", "Figaro"], answer: 0 },
+    { q: "En 'El Libro de la Selva', ¿cómo se llama el oso amigo de Mowgli?", options: ["Baloo", "Bagheera", "Shere Khan", "Louie"], answer: 0 },
+    { q: "En 'El Libro de la Selva', ¿qué animal es Bagheera?", options: ["Una pantera negra", "Un tigre", "Un oso", "Un lobo"], answer: 0 }
   ];
 
-  let current = 0;
+  // Estado del juego
+  let playerQuestions = [];   // playerQuestions[i] = array de 10 preguntas
+  let currentPlayer = 0;      // índice de la jugadora actual
+  let currentQ = 0;           // índice 0-9 dentro de la ronda
   let answered = false;
 
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   function startGame() {
-    document.getElementById("start-screen").classList.add("hidden");
-    document.getElementById("game-screen").classList.remove("hidden");
-    current = 0;
     players.forEach(p => p.score = 0);
+    // Elige 30 preguntas distintas del banco y reparte 10 a cada jugadora
+    const picked = shuffle(questionBank).slice(0, players.length * QUESTIONS_PER_PLAYER);
+    playerQuestions = [];
+    for (let i = 0; i < players.length; i++) {
+      playerQuestions.push(picked.slice(i * QUESTIONS_PER_PLAYER, (i + 1) * QUESTIONS_PER_PLAYER));
+    }
+    currentPlayer = 0;
+    document.getElementById("start-screen").classList.add("hidden");
+    showInterstitial();
+  }
+
+  function showInterstitial() {
+    const player = players[currentPlayer];
+    document.getElementById("game-screen").classList.add("hidden");
+    document.getElementById("end-screen").classList.add("hidden");
+    document.getElementById("inter-screen").classList.remove("hidden");
+    document.getElementById("inter-emoji").textContent = player.emoji;
+    document.getElementById("inter-title").textContent = `¡Prepárate, ${player.name}!`;
+    const restantes = players.length - currentPlayer - 1;
+    let aviso = "";
+    if (currentPlayer > 0) aviso = "Que nadie le sople las respuestas 🤫. ";
+    document.getElementById("inter-text").textContent =
+      `${aviso}Vienen tus ${QUESTIONS_PER_PLAYER} preguntas, una detrás de la otra. ¡Mucha suerte!`;
+    document.getElementById("inter-btn").textContent = `▶️ Comenzar las 10 de ${player.name}`;
+  }
+
+  function beginPlayerRound() {
+    currentQ = 0;
+    document.getElementById("inter-screen").classList.add("hidden");
+    document.getElementById("game-screen").classList.remove("hidden");
     renderQuestion();
   }
 
   function renderScores() {
     const box = document.getElementById("scores");
-    const turnIdx = current % players.length;
     box.innerHTML = players.map((p, i) =>
-      `<div class="score-box ${i === turnIdx ? 'active' : ''}">
+      `<div class="score-box ${i === currentPlayer ? 'active' : ''}">
          ${p.emoji} ${p.name}
          <span class="pts">${p.score}</span>
        </div>`
@@ -236,13 +292,13 @@
 
   function renderQuestion() {
     answered = false;
-    const turnIdx = current % players.length;
-    const player = players[turnIdx];
-    const item = questions[current];
+    const player = players[currentPlayer];
+    const item = playerQuestions[currentPlayer][currentQ];
 
     renderScores();
     document.getElementById("turn-banner").textContent = `${player.emoji} ¡Turno de ${player.name}!`;
-    document.getElementById("progress").textContent = `Pregunta ${current + 1} de ${questions.length}`;
+    document.getElementById("progress").textContent =
+      `Pregunta ${currentQ + 1} de ${QUESTIONS_PER_PLAYER}`;
     document.getElementById("question").textContent = item.q;
     document.getElementById("feedback").textContent = "";
     document.getElementById("next-btn").classList.add("hidden");
@@ -261,9 +317,8 @@
   function selectAnswer(i, btn) {
     if (answered) return;
     answered = true;
-    const item = questions[current];
-    const turnIdx = current % players.length;
-    const player = players[turnIdx];
+    const item = playerQuestions[currentPlayer][currentQ];
+    const player = players[currentPlayer];
     const buttons = document.querySelectorAll(".option");
 
     buttons.forEach((b, idx) => {
@@ -277,26 +332,37 @@
       fb.textContent = `✅ ¡Correcto, ${player.name}! +1 punto`;
     } else {
       btn.classList.add("wrong");
-      fb.textContent = `❌ ¡Casi, ${player.name}! La respuesta correcta está marcada.`;
+      fb.textContent = `❌ ¡Casi! La respuesta correcta está marcada en verde.`;
     }
 
     renderScores();
     const nextBtn = document.getElementById("next-btn");
-    nextBtn.textContent = current + 1 < questions.length ? "Siguiente ➜" : "Ver resultado 🏆";
+    const lastQuestion = currentQ + 1 >= QUESTIONS_PER_PLAYER;
+    const lastPlayer = currentPlayer + 1 >= players.length;
+    if (lastQuestion && lastPlayer) nextBtn.textContent = "Ver resultado final 🏆";
+    else if (lastQuestion) nextBtn.textContent = "Pasar el turno ➜";
+    else nextBtn.textContent = "Siguiente ➜";
     nextBtn.classList.remove("hidden");
   }
 
   function nextQuestion() {
-    current++;
-    if (current < questions.length) {
+    currentQ++;
+    if (currentQ < QUESTIONS_PER_PLAYER) {
       renderQuestion();
     } else {
-      showResults();
+      // Terminó la ronda de esta jugadora
+      currentPlayer++;
+      if (currentPlayer < players.length) {
+        showInterstitial();
+      } else {
+        showResults();
+      }
     }
   }
 
   function showResults() {
     document.getElementById("game-screen").classList.add("hidden");
+    document.getElementById("inter-screen").classList.add("hidden");
     document.getElementById("end-screen").classList.remove("hidden");
 
     const sorted = [...players].sort((a, b) => b.score - a.score);
@@ -313,7 +379,7 @@
     document.getElementById("final-scores").innerHTML = sorted.map((p, i) =>
       `<div class="final-row ${i === 0 ? 'first' : ''}">
          <span>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${p.emoji} ${p.name}</span>
-         <span>${p.score} / ${questions.length} pts</span>
+         <span>${p.score} / ${QUESTIONS_PER_PLAYER} pts</span>
        </div>`
     ).join("");
   }
