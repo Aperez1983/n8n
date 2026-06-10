@@ -100,7 +100,6 @@
   .next-btn:hover { background: rgba(255,255,255,0.32); }
   .hidden { display: none; }
   .feedback { text-align: center; margin-top: 16px; font-size: 1.05rem; min-height: 26px; font-weight: bold; }
-  /* Interstitial / pase de turno */
   .inter { text-align: center; }
   .inter .big-emoji { font-size: 4.5rem; animation: bounce 1s infinite alternate; }
   .inter h2 { font-size: 1.7rem; margin: 14px 0 6px; color: #ffd700; text-shadow: 0 2px 12px rgba(255,215,0,0.6); }
@@ -124,13 +123,13 @@
   <!-- PANTALLA DE INICIO -->
   <div id="start-screen">
     <h1>✨ Trivia Disney · Nivel Experto ✨</h1>
-    <p class="subtitle">50 preguntas difíciles · cada jugadora responde sus 10, una detrás de la otra</p>
+    <p class="subtitle">200 preguntas difíciles · cada jugadora responde sus 10, una detrás de la otra</p>
     <div class="players-setup">
       <div class="player-chip"><span class="emoji">👧</span><span class="name">Maite</span></div>
       <div class="player-chip"><span class="emoji">🧒</span><span class="name">Isidora</span></div>
       <div class="player-chip"><span class="emoji">👑</span><span class="name">Mamá</span></div>
     </div>
-    <p class="subtitle">Cada partida elige 30 preguntas al azar del banco de 50. ¡Que gane la verdadera fan!</p>
+    <p class="subtitle">Cada partida elige 30 preguntas al azar del banco de 200. ¡Que gane la verdadera fan!</p>
     <button class="btn-primary" onclick="startGame()">🎬 ¡Empezar la trivia!</button>
   </div>
 
@@ -176,59 +175,284 @@
     { name: "Mamá", emoji: "👑", score: 0 }
   ];
 
-  // Banco de 50 preguntas difíciles de Disney
+  // Banco de 200 preguntas difíciles de Disney y Pixar
   const questionBank = [
-    { q: "En 'La Bella Durmiente' (doblaje latino), las hadas son Flora, Fauna y... ¿la tercera?", options: ["Primavera", "Madreselva", "Azucena", "Margarita"], answer: 0 },
-    { q: "¿Cuál es el nombre del reino donde gobiernan Elsa y Anna en 'Frozen'?", options: ["Corona", "Arendelle", "Weselton", "DunBroch"], answer: 1 },
-    { q: "¿Qué tipo de ave es Zazú, el mayordomo del rey en 'El Rey León'?", options: ["Un tucán", "Un cálao piquirrojo", "Un pelícano", "Una cacatúa"], answer: 1 },
-    { q: "¿Cuántas hermanas mayores tiene Ariel en 'La Sirenita'?", options: ["Cuatro", "Cinco", "Seis", "Siete"], answer: 2 },
-    { q: "¿Cuál es el don (poder) de Luisa Madrigal en 'Encanto'?", options: ["Súper fuerza", "Curar con la comida", "Oír todo", "Crear flores"], answer: 0 },
-    { q: "¿Qué nombre está escrito en la suela de la bota de Woody en 'Toy Story'?", options: ["Buzz", "Andy", "Sid", "Bonnie"], answer: 1 },
-    { q: "¿Cuál es el verdadero nombre del ladrón Flynn Rider en 'Enredados'?", options: ["Eugene Fitzherbert", "Phillip Andrews", "Naveen", "Hans Westergaard"], answer: 0 },
-    { q: "¿Cómo se llama el cangrejo gigante coleccionista de Lalotai en 'Moana'?", options: ["Te Fiti", "Tamatoa", "Maui", "Heihei"], answer: 1 },
-    { q: "¿Cómo se llama el mayordomo con forma de reloj en 'La Bella y la Bestia'?", options: ["Lumière", "Din Don (Cogsworth)", "Chip", "Maurice"], answer: 1 },
-    { q: "Cuando el Genio sale de la lámpara en 'Aladdín', ¿cuántos años dice que llevaba encerrado?", options: ["100 años", "500 años", "10.000 años", "1.000 años"], answer: 2 },
-    { q: "¿Cómo se llama el caballo del palacio que persigue a Flynn en 'Enredados'?", options: ["Maximus", "Khan", "Philippe", "Samson"], answer: 0 },
-    { q: "¿Cómo se llama el padre de Ariel, el rey del mar?", options: ["Neptuno", "Tritón", "Poseidón", "Eric"], answer: 1 },
-    { q: "¿Cómo se llaman las dos anguilas que sirven a Úrsula en 'La Sirenita'?", options: ["Flotsam y Jetsam", "Shenzi y Banzai", "Jaq y Gus", "Pain y Panic"], answer: 0 },
-    { q: "¿Cómo se llaman las tres hienas aliadas de Scar en 'El Rey León'?", options: ["Shenzi, Banzai y Ed", "Flotsam, Jetsam y Ed", "Timón, Pumba y Ed", "Shenzi, Nala y Ed"], answer: 0 },
-    { q: "¿Qué animal es Pumba, el amigo de Timón en 'El Rey León'?", options: ["Un jabalí (facóquero)", "Un suricato", "Un tejón", "Un oso hormiguero"], answer: 0 },
+    // --- El Rey León ---
+    { q: "En 'El Rey León', ¿cómo se llama el padre de Simba?", options: ["Mufasa", "Scar", "Rafiki", "Kovu"], answer: 0 },
+    { q: "En 'El Rey León', ¿cómo se llama el hermano villano de Mufasa?", options: ["Scar", "Banzai", "Zazú", "Shere Khan"], answer: 0 },
+    { q: "¿Qué animal es Pumba en 'El Rey León'?", options: ["Un jabalí (facóquero)", "Un suricato", "Un tejón", "Un oso hormiguero"], answer: 0 },
     { q: "¿Qué animal es Timón en 'El Rey León'?", options: ["Un suricato", "Una mangosta", "Una ardilla", "Un hurón"], answer: 0 },
-    { q: "En 'Mulán', ¿cómo se llama el pequeño dragón guardián de la familia?", options: ["Mushu", "Sisu", "Cri-Kee", "Khan"], answer: 0 },
-    { q: "¿Cómo se llama el caballo de Mulán?", options: ["Khan", "Maximus", "Angus", "Pegaso"], answer: 0 },
-    { q: "En 'Pocahontas', ¿cómo se llama el mapache que la acompaña?", options: ["Meeko", "Flit", "Percy", "Rajah"], answer: 0 },
-    { q: "En 'Aladdín', ¿cómo se llama el tigre mascota de la princesa Jasmín?", options: ["Rajah", "Shere Khan", "Sahib", "Raja"], answer: 0 },
-    { q: "¿Cómo se llama el loro parlante de Jafar en 'Aladdín'?", options: ["Iago", "Zazú", "Diablo", "Pepe"], answer: 0 },
-    { q: "En 'Hércules', ¿cómo se llama el caballo alado?", options: ["Pegaso", "Maximus", "Khan", "Tiro al Blanco"], answer: 0 },
-    { q: "¿Quién es el villano de 'Hércules', dios del inframundo?", options: ["Hades", "Zeus", "Scar", "Jafar"], answer: 0 },
-    { q: "En 'Tarzán', ¿cómo se llama el elefante amigo de Tarzán?", options: ["Tantor", "Terk", "Hathi", "Dumbo"], answer: 0 },
-    { q: "En 'El Jorobado de Notre Dame', ¿cómo se llama el protagonista?", options: ["Quasimodo", "Frollo", "Febo", "Clopin"], answer: 0 },
-    { q: "En 'La Princesa y el Sapo', ¿cómo se llama la luciérnaga enamorada?", options: ["Ray", "Louis", "Naveen", "Mama Odie"], answer: 0 },
-    { q: "En 'La Princesa y el Sapo', ¿qué instrumento toca el cocodrilo Louis?", options: ["Trompeta", "Saxofón", "Piano", "Trombón"], answer: 0 },
-    { q: "En 'Valiente' (Brave), ¿cómo se llama la princesa pelirroja arquera?", options: ["Mérida", "Rapunzel", "Elinor", "Anna"], answer: 0 },
-    { q: "En 'Valiente', los hermanos trillizos de Mérida son Harris, Hubert y...?", options: ["Hamish", "Hamlet", "Hugo", "Henry"], answer: 0 },
-    { q: "En 'Frozen', ¿cómo se llama el reno de Kristoff?", options: ["Sven", "Olaf", "Marshmallow", "Nokk"], answer: 0 },
+    { q: "¿Qué tipo de ave es Zazú, el mayordomo del rey?", options: ["Un tucán", "Un cálao piquirrojo", "Un pelícano", "Una cacatúa"], answer: 1 },
+    { q: "¿Cómo se llama el sabio mandril de 'El Rey León'?", options: ["Rafiki", "Zazú", "Mufasa", "Kovu"], answer: 0 },
+    { q: "¿Cómo se llama la leona amiga de Simba?", options: ["Nala", "Sarabi", "Kiara", "Shenzi"], answer: 0 },
+    { q: "¿Qué significa la frase 'Hakuna Matata'?", options: ["Vive y sé feliz / sin preocupaciones", "Hola amigo", "Rey de la selva", "Corre rápido"], answer: 0 },
+    { q: "¿Cómo se llaman las tres hienas aliadas de Scar?", options: ["Shenzi, Banzai y Ed", "Flotsam, Jetsam y Ed", "Timón, Pumba y Ed", "Shenzi, Nala y Ed"], answer: 0 },
+    { q: "¿Cómo se llama la madre de Simba?", options: ["Sarabi", "Nala", "Sarafina", "Kiara"], answer: 0 },
+    // --- Aladdín ---
+    { q: "En 'Aladdín', ¿cómo se llama el mono de Aladdín?", options: ["Abu", "Rajah", "Iago", "Mushu"], answer: 0 },
+    { q: "¿Cómo se llama el loro parlante de Jafar?", options: ["Iago", "Zazú", "Diablo", "Pepe"], answer: 0 },
+    { q: "¿Cómo se llama el tigre mascota de la princesa Jasmín?", options: ["Rajah", "Shere Khan", "Sahib", "Sultán"], answer: 0 },
+    { q: "¿Cuántos deseos concede el Genio de la lámpara?", options: ["Dos", "Tres", "Cuatro", "Infinitos"], answer: 1 },
+    { q: "¿Cómo se llama la ciudad donde vive Aladdín?", options: ["Agrabah", "Arendelle", "Corona", "Atlantis"], answer: 0 },
+    { q: "¿Quién es el malvado visir, villano de 'Aladdín'?", options: ["Jafar", "Hades", "Scar", "Gastón"], answer: 0 },
+    { q: "Cuando el Genio sale de la lámpara, ¿cuántos años dice que llevaba encerrado?", options: ["100 años", "500 años", "10.000 años", "1.000 años"], answer: 2 },
+    { q: "¿Cuál es el primer deseo de Aladdín al Genio?", options: ["Convertirse en príncipe", "Ser muy rico", "Aprender a volar", "Ser libre"], answer: 0 },
+    // --- La Sirenita ---
+    { q: "¿Cómo se llama el padre de Ariel, rey del mar?", options: ["Neptuno", "Tritón", "Poseidón", "Eric"], answer: 1 },
+    { q: "¿Cómo se llama la bruja del mar en 'La Sirenita'?", options: ["Úrsula", "Maléfica", "Cruella", "Gothel"], answer: 0 },
+    { q: "¿Cómo se llaman las dos anguilas que sirven a Úrsula?", options: ["Flotsam y Jetsam", "Shenzi y Banzai", "Jaq y Gus", "Pain y Panic"], answer: 0 },
+    { q: "¿Cómo se llama el cangrejo músico, consejero del rey?", options: ["Sebastián", "Scuttle", "Flounder", "Louis"], answer: 0 },
+    { q: "¿Cómo se llama el pececito amigo de Ariel?", options: ["Flounder", "Sebastián", "Nemo", "Dory"], answer: 0 },
+    { q: "¿Cómo se llama la gaviota amiga de Ariel?", options: ["Scuttle", "Nigel", "Iago", "Zazú"], answer: 0 },
+    { q: "¿Cómo se llama el príncipe humano del que Ariel se enamora?", options: ["Eric", "Felipe", "Naveen", "Adam"], answer: 0 },
+    { q: "¿Qué entrega Ariel a Úrsula a cambio de tener piernas?", options: ["Su voz", "Su cabello", "Su corona", "Su collar"], answer: 0 },
+    { q: "¿Cuántas hermanas mayores tiene Ariel?", options: ["Cuatro", "Cinco", "Seis", "Siete"], answer: 2 },
+    { q: "¿Cómo se llama el perro del príncipe Eric?", options: ["Max", "Bruno", "Dug", "Toby"], answer: 0 },
+    // --- La Bella y la Bestia ---
+    { q: "En 'La Bella y la Bestia', ¿cómo se llama el candelabro encantado?", options: ["Lumière", "Din Don", "Chip", "Gastón"], answer: 0 },
+    { q: "¿Cómo se llama el mayordomo con forma de reloj?", options: ["Lumière", "Din Don (Cogsworth)", "Chip", "Maurice"], answer: 1 },
+    { q: "¿Cómo se llama la tacita pequeña, hijo de la Sra. Potts?", options: ["Chip", "Lumière", "Din Don", "Sultán"], answer: 0 },
+    { q: "¿Cómo se llama la tetera del castillo?", options: ["Sra. Potts", "Plumette", "Babette", "Fifí"], answer: 0 },
+    { q: "¿Cómo se llama el pretendiente engreído de Bella?", options: ["Gastón", "LeFou", "Maurice", "Adam"], answer: 0 },
+    { q: "¿Cómo se llama el padre inventor de Bella?", options: ["Maurice", "Geppetto", "Tritón", "Fergus"], answer: 0 },
+    { q: "¿Qué flor guarda la Bestia bajo una cúpula de cristal?", options: ["Una rosa", "Un tulipán", "Un lirio", "Un girasol"], answer: 0 },
+    { q: "¿Cuál es la actividad favorita de Bella?", options: ["Leer", "Cantar", "Cocinar", "Bailar"], answer: 0 },
+    // --- Frozen ---
+    { q: "¿Cuál es el nombre del reino donde gobiernan Elsa y Anna?", options: ["Corona", "Arendelle", "Weselton", "DunBroch"], answer: 1 },
+    { q: "¿Cómo se llama el reno de Kristoff?", options: ["Sven", "Olaf", "Nokk", "Maximus"], answer: 0 },
+    { q: "¿Cómo se llama el muñeco de nieve amigo de Anna y Elsa?", options: ["Olaf", "Sven", "Marshmallow", "Bruni"], answer: 0 },
+    { q: "¿Cómo se llama el gigante de nieve que crea Elsa para vigilar su palacio?", options: ["Malvavisco (Marshmallow)", "Bruni", "Nokk", "Olaf"], answer: 0 },
+    { q: "¿Quién es el príncipe que traiciona a Anna en 'Frozen'?", options: ["Hans", "Kristoff", "Weselton", "Eric"], answer: 0 },
+    { q: "¿Qué tipo de poderes tiene Elsa?", options: ["Hielo y nieve", "Fuego", "Viento", "Agua"], answer: 0 },
+    { q: "¿Qué descongela finalmente el corazón helado de Anna?", options: ["Un acto de amor verdadero", "Un beso de príncipe", "La magia de Elsa", "El sol"], answer: 0 },
+    { q: "¿Cuál es la canción más famosa de Elsa (doblaje latino)?", options: ["Libre soy", "Mucho más allá", "Hazme un muñeco", "Veo en ti la luz"], answer: 0 },
+    { q: "¿Qué oficio tiene Kristoff?", options: ["Vendedor de hielo", "Florista", "Panadero", "Zapatero"], answer: 0 },
     { q: "En 'Frozen 2', ¿cómo se llama la salamandra mágica de fuego?", options: ["Bruni", "Nokk", "Gale", "Sven"], answer: 0 },
     { q: "En 'Frozen 2', ¿cómo se llama el espíritu del agua con forma de caballo?", options: ["Nokk", "Bruni", "Gale", "Marshmallow"], answer: 0 },
     { q: "En 'Frozen 2', ¿cómo se llama el pueblo del bosque encantado?", options: ["Northuldra", "Arendelle", "Corona", "Weselton"], answer: 0 },
-    { q: "En 'Coco', ¿cómo se llama el perro callejero que acompaña a Miguel?", options: ["Dante", "Pepita", "Ernesto", "Chamuco"], answer: 0 },
-    { q: "En 'Coco', ¿cómo se llama el ídolo músico que Miguel admira?", options: ["Ernesto de la Cruz", "Héctor Rivera", "Miguel Rivera", "Juanito"], answer: 0 },
-    { q: "En 'Coco', ¿quién resulta ser el verdadero tatarabuelo músico de Miguel?", options: ["Héctor", "Ernesto", "Franco", "Julio"], answer: 0 },
+    { q: "¿Cómo se llama la madre de Elsa y Anna?", options: ["Iduna", "Sarabi", "Tala", "Primavera"], answer: 0 },
+    { q: "En 'Frozen 2', ¿cómo se llama el río glaciar que guarda la memoria?", options: ["Ahtohallan", "Lalotai", "Atlantis", "Agrabah"], answer: 0 },
+    // --- Toy Story ---
+    { q: "¿Qué nombre está escrito en la suela de la bota de Woody?", options: ["Buzz", "Andy", "Sid", "Bonnie"], answer: 1 },
+    { q: "¿Cómo se llama el guardián espacial de juguete en 'Toy Story'?", options: ["Buzz Lightyear", "Woody", "Rex", "Zurg"], answer: 0 },
+    { q: "¿Cómo se llama el dinosaurio verde de 'Toy Story'?", options: ["Rex", "Hamm", "Slinky", "Dino"], answer: 0 },
+    { q: "¿Cómo se llama el cerdito alcancía de 'Toy Story'?", options: ["Hamm", "Rex", "Slinky", "Buttercup"], answer: 0 },
+    { q: "¿Cómo se llama el perro de resorte en 'Toy Story'?", options: ["Slinky", "Buster", "Dug", "Max"], answer: 0 },
+    { q: "¿Cómo se llama la vaquera que aparece en 'Toy Story 2'?", options: ["Jessie", "Bo Peep", "Bonnie", "Dolly"], answer: 0 },
+    { q: "¿Cómo se llama el caballo de juguete de Woody?", options: ["Tiro al Blanco", "Maximus", "Khan", "Angus"], answer: 0 },
+    { q: "¿Cuál es la frase más famosa de Buzz Lightyear?", options: ["¡Al infinito y más allá!", "¡Hay una serpiente en mi bota!", "¡Yo soy tu amigo fiel!", "¡Hasta la vista!"], answer: 0 },
+    { q: "En 'Toy Story 1', ¿cómo se llama el niño vecino que destroza juguetes?", options: ["Sid", "Andy", "Al", "Ken"], answer: 0 },
+    { q: "En 'Toy Story 3', ¿cómo se llama la nueva niña dueña de los juguetes?", options: ["Bonnie", "Molly", "Jessie", "Daisy"], answer: 0 },
+    { q: "En 'Toy Story 3', ¿cómo se llama el oso rosado villano que huele a fresa?", options: ["Lotso", "Zurg", "Stinky Pete", "Sid"], answer: 0 },
+    { q: "En 'Toy Story 4', ¿cómo se llama el juguete hecho con un tenedor?", options: ["Forky", "Ducky", "Bunny", "Combo"], answer: 0 },
+    // --- Buscando a Nemo ---
+    { q: "¿Qué tipo de pez es Nemo?", options: ["Pez payaso", "Pez cirujano", "Pez globo", "Pez ángel"], answer: 0 },
+    { q: "¿Cómo se llama el papá de Nemo?", options: ["Marlin", "Bruce", "Gill", "Nigel"], answer: 0 },
+    { q: "¿Cómo se llama la pez azul que sufre de mala memoria?", options: ["Dory", "Coral", "Deb", "Peach"], answer: 0 },
+    { q: "¿Cómo se llama la tortuga marina muy relajada?", options: ["Crush", "Squirt", "Nigel", "Bruce"], answer: 0 },
+    { q: "¿Cómo se llama el tiburón que intenta ser vegetariano?", options: ["Bruce", "Chum", "Anchor", "Crush"], answer: 0 },
+    { q: "¿Cómo se llama el pelícano amigo de los peces?", options: ["Nigel", "Marlin", "Gill", "Bloat"], answer: 0 },
+    { q: "¿Cuál es la frase típica de Dory para no rendirse?", options: ["Sigue nadando", "Al infinito", "Hakuna Matata", "Recuérdame"], answer: 0 },
+    { q: "¿En qué ciudad está la pecera del dentista donde llevan a Nemo?", options: ["Sídney", "Londres", "Nueva York", "París"], answer: 0 },
+    // --- Coco ---
+    { q: "En 'Coco', ¿cómo se llama el perro callejero que acompaña a Miguel?", options: ["Dante", "Pepita", "Ernesto", "Bruno"], answer: 0 },
+    { q: "En 'Coco', ¿cómo se llama el ídolo músico que Miguel admira?", options: ["Ernesto de la Cruz", "Héctor Rivera", "Franco", "Juan Ortodoncia"], answer: 0 },
+    { q: "En 'Coco', ¿quién resulta ser el verdadero tatarabuelo músico de Miguel?", options: ["Héctor", "Ernesto", "Julio", "Franco"], answer: 0 },
+    { q: "En 'Coco', ¿qué instrumento toca Miguel?", options: ["Guitarra", "Trompeta", "Violín", "Piano"], answer: 0 },
+    { q: "En 'Coco', ¿a qué mundo viaja Miguel?", options: ["La Tierra de los Muertos", "El Olimpo", "Nunca Jamás", "Lalotai"], answer: 0 },
+    { q: "En 'Coco', ¿cómo se llama el alebrije jaguar de Mamá Imelda?", options: ["Pepita", "Dante", "Tamatoa", "Bruni"], answer: 0 },
+    { q: "¿Cuál es la canción que une a la familia en 'Coco'?", options: ["Recuérdame", "Un poco loco", "El latido de mi corazón", "Libre soy"], answer: 0 },
+    { q: "En 'Coco', ¿qué se necesita para cruzar el puente de pétalos en el Día de Muertos?", options: ["Tener una foto en una ofrenda", "Pagar una moneda", "Cantar una canción", "Tener una guitarra"], answer: 0 },
+    // --- Encanto ---
     { q: "En 'Encanto', ¿quién es el personaje del que 'no se habla'?", options: ["Bruno", "Camilo", "Félix", "Agustín"], answer: 0 },
     { q: "En 'Encanto', ¿cómo se llama la abuela de la familia Madrigal?", options: ["Alma", "Pepa", "Julieta", "Dolores"], answer: 0 },
     { q: "En 'Encanto', ¿cuál es el don de Antonio, el más pequeño?", options: ["Hablar con los animales", "Súper fuerza", "Controlar el clima", "Curar"], answer: 0 },
     { q: "En 'Encanto', ¿quién es la única Madrigal que no recibió un don mágico?", options: ["Mirabel", "Isabela", "Luisa", "Dolores"], answer: 0 },
+    { q: "En 'Encanto', ¿cuál es el don de Luisa?", options: ["Súper fuerza", "Crear flores", "Controlar el clima", "Oír todo"], answer: 0 },
+    { q: "En 'Encanto', ¿cuál es el don de Isabela, la hermana 'perfecta'?", options: ["Hacer crecer flores y plantas", "Súper fuerza", "Controlar el clima", "Curar"], answer: 0 },
+    { q: "En 'Encanto', ¿cuál es el don de la tía Pepa?", options: ["Controlar el clima con su ánimo", "Súper fuerza", "Crear flores", "Cambiar de forma"], answer: 0 },
+    { q: "En 'Encanto', ¿cuál es el don de Camilo?", options: ["Cambiar de forma", "Controlar el clima", "Súper fuerza", "Oído agudo"], answer: 0 },
+    { q: "En 'Encanto', ¿cómo se llama la casa mágica de los Madrigal?", options: ["Casita", "Madrigal", "El Encanto", "La Casona"], answer: 0 },
+    // --- Moana ---
     { q: "En 'Moana' (Vaiana), ¿cómo se llama la abuela de Moana?", options: ["Tala", "Sina", "Te Fiti", "Pua"], answer: 0 },
-    { q: "En 'Moana', ¿qué le robó Maui a la diosa Te Fiti?", options: ["Su corazón (la piedra)", "Su anzuelo mágico", "Su canoa", "Su isla"], answer: 0 },
-    { q: "En 'La Sirenita', ¿cómo se llama el cangrejo músico, consejero del rey?", options: ["Sebastián", "Scuttle", "Flounder", "Louis"], answer: 0 },
-    { q: "En 'La Sirenita', ¿cómo se llama el príncipe humano del que Ariel se enamora?", options: ["Eric", "Felipe", "Naveen", "Adam"], answer: 0 },
-    { q: "En 'La Bella y la Bestia', ¿cómo se llama el candelabro encantado?", options: ["Lumière", "Din Don", "Chip", "Gastón"], answer: 0 },
-    { q: "En 'Blancanieves', ¿cuál de los siete enanitos no habla?", options: ["Tontín", "Gruñón", "Dormilón", "Sabio"], answer: 0 },
-    { q: "En 'Cenicienta', ¿cómo se llama el gato malvado de la madrastra?", options: ["Lucifer", "Lucifurio", "Félix", "Tom"], answer: 0 },
+    { q: "¿Cómo se llama el cangrejo gigante coleccionista de Lalotai?", options: ["Te Fiti", "Tamatoa", "Maui", "Heihei"], answer: 1 },
+    { q: "En 'Moana', ¿qué le robó Maui a la diosa Te Fiti?", options: ["Su corazón (la piedra)", "Su anzuelo", "Su canoa", "Su isla"], answer: 0 },
+    { q: "En 'Moana', ¿cómo se llama la gallina tontita?", options: ["Heihei", "Pua", "Tala", "Sven"], answer: 0 },
+    { q: "En 'Moana', ¿cómo se llama el cerdito mascota?", options: ["Pua", "Heihei", "Hamm", "Dante"], answer: 0 },
+    { q: "En 'Moana', ¿cómo se llama el demonio de lava?", options: ["Te Kā", "Te Fiti", "Tamatoa", "Maui"], answer: 0 },
+    { q: "En 'Moana', ¿qué usa Maui para transformarse en animales?", options: ["Su anzuelo mágico", "Un remo", "Una concha", "Un collar"], answer: 0 },
+    // --- Enredados ---
+    { q: "¿Cuál es el verdadero nombre del ladrón Flynn Rider en 'Enredados'?", options: ["Eugene Fitzherbert", "Phillip Andrews", "Naveen", "Hans Westergaard"], answer: 0 },
+    { q: "¿Cómo se llama el camaleón mascota de Rapunzel?", options: ["Pascal", "Mushu", "Bruni", "Flit"], answer: 0 },
+    { q: "¿Cómo se llama el caballo del palacio que persigue a Flynn?", options: ["Maximus", "Khan", "Philippe", "Samson"], answer: 0 },
+    { q: "¿Cómo se llama la villana que mantiene encerrada a Rapunzel?", options: ["Madre Gothel", "Úrsula", "Cruella", "Lady Tremaine"], answer: 0 },
+    { q: "¿Qué poder tiene el cabello mágico de Rapunzel?", options: ["Curar y rejuvenecer", "Volar", "Congelar", "Hablar"], answer: 0 },
+    { q: "En 'Enredados', ¿qué sueltan al cielo cada año por la princesa perdida?", options: ["Faroles / linternas flotantes", "Globos", "Fuegos artificiales", "Palomas"], answer: 0 },
+    { q: "¿Qué deseaba ver Rapunzel desde su torre?", options: ["Las luces flotantes", "El mar", "El castillo", "La nieve"], answer: 0 },
+    // --- Mulán ---
+    { q: "En 'Mulán', ¿cómo se llama el pequeño dragón guardián de la familia?", options: ["Mushu", "Sisu", "Cri-Kee", "Khan"], answer: 0 },
+    { q: "¿Cómo se llama el caballo de Mulán?", options: ["Khan", "Maximus", "Angus", "Pegaso"], answer: 0 },
+    { q: "¿Cómo se llama el grillo de la suerte en 'Mulán'?", options: ["Cri-Kee", "Mushu", "Pepito", "Jiminy"], answer: 0 },
+    { q: "¿Quién es el villano líder de los hunos en 'Mulán'?", options: ["Shan Yu", "Jafar", "Hades", "Scar"], answer: 0 },
+    { q: "¿Qué nombre falso usa Mulán al unirse al ejército?", options: ["Ping", "Mushu", "Fa", "Li"], answer: 0 },
+    { q: "¿Por quién decide Mulán ir a la guerra en lugar de él?", options: ["Por su padre", "Por su hermano", "Por su esposo", "Por el emperador"], answer: 0 },
+    // --- Pocahontas ---
+    { q: "En 'Pocahontas', ¿cómo se llama el mapache?", options: ["Meeko", "Flit", "Percy", "Rajah"], answer: 0 },
+    { q: "En 'Pocahontas', ¿cómo se llama el colibrí?", options: ["Flit", "Meeko", "Percy", "Heihei"], answer: 0 },
+    { q: "En 'Pocahontas', ¿cómo se llama el árbol sabio que la aconseja?", options: ["Abuela Sauce", "Mamá Odie", "Tala", "Rafiki"], answer: 0 },
+    { q: "En 'Pocahontas', ¿de quién se enamora la protagonista?", options: ["John Smith", "Ratcliffe", "Eric", "Naveen"], answer: 0 },
+    // --- Hércules ---
+    { q: "En 'Hércules', ¿cómo se llama el caballo alado?", options: ["Pegaso", "Maximus", "Khan", "Tiro al Blanco"], answer: 0 },
+    { q: "¿Quién es el villano de 'Hércules', dios del inframundo?", options: ["Hades", "Zeus", "Scar", "Jafar"], answer: 0 },
+    { q: "En 'Hércules', ¿cómo se llama el sátiro que lo entrena?", options: ["Filoctetes (Fil)", "Zeus", "Hermes", "Pena"], answer: 0 },
+    { q: "En 'Hércules', ¿cómo se llama la heroína de la que se enamora?", options: ["Megara (Meg)", "Jasmín", "Esmeralda", "Jane"], answer: 0 },
+    { q: "¿Cómo se llaman los dos secuaces torpes de Hades?", options: ["Pena y Pánico", "Flotsam y Jetsam", "Si y Am", "Jaq y Gus"], answer: 0 },
+    // --- Tarzán ---
+    { q: "En 'Tarzán', ¿cómo se llama el elefante amigo?", options: ["Tantor", "Terk", "Hathi", "Dumbo"], answer: 0 },
+    { q: "En 'Tarzán', ¿cómo se llama la gorila amiga de la infancia?", options: ["Terk", "Kala", "Jane", "Tantor"], answer: 0 },
+    { q: "En 'Tarzán', ¿cómo se llama la gorila que cría a Tarzán como su hijo?", options: ["Kala", "Terk", "Jane", "Sarabi"], answer: 0 },
+    { q: "En 'Tarzán', ¿cómo se llama la chica humana de la que se enamora?", options: ["Jane", "Megara", "Wendy", "Esmeralda"], answer: 0 },
+    { q: "En 'Tarzán', ¿cómo se llama el villano cazador?", options: ["Clayton", "Ratcliffe", "Frollo", "Garfio"], answer: 0 },
+    // --- El Libro de la Selva ---
+    { q: "En 'El Libro de la Selva', ¿cómo se llama el oso amigo de Mowgli?", options: ["Baloo", "Bagheera", "Louie", "Shere Khan"], answer: 0 },
+    { q: "En 'El Libro de la Selva', ¿qué animal es Bagheera?", options: ["Una pantera negra", "Un tigre", "Un oso", "Un lobo"], answer: 0 },
+    { q: "¿Cómo se llama el niño protagonista de 'El Libro de la Selva'?", options: ["Mowgli", "Tarzán", "Peter", "Christopher"], answer: 0 },
+    { q: "¿Cómo se llama el tigre villano de 'El Libro de la Selva'?", options: ["Shere Khan", "Kaa", "Louie", "Bagheera"], answer: 0 },
+    { q: "En 'El Libro de la Selva', ¿cómo se llama la serpiente hipnotizadora?", options: ["Kaa", "Nag", "Sir Hiss", "Jafar"], answer: 0 },
+    // --- 101 Dálmatas ---
+    { q: "¿Quién es la villana de '101 Dálmatas'?", options: ["Cruella de Vil", "Úrsula", "Gothel", "Maléfica"], answer: 0 },
+    { q: "¿Cómo se llaman los perros dálmatas padres en '101 Dálmatas'?", options: ["Pongo y Perdita", "Reina y Golfo", "Max y Bruno", "Dug y Alpha"], answer: 0 },
+    { q: "¿Cuántos dálmatas da el título de la película de Disney?", options: ["99", "100", "101", "102"], answer: 2 },
+    { q: "¿Para qué quería Cruella de Vil a los cachorros dálmatas?", options: ["Para hacer un abrigo de piel", "Para un circo", "Para venderlos", "Para una carrera"], answer: 0 },
+    // --- Cenicienta ---
+    { q: "En 'Cenicienta', ¿cómo se llaman los dos ratones amigos?", options: ["Jaq y Gus", "Bernardo y Bianca", "Timothy y Dumbo", "Pip y Dale"], answer: 0 },
+    { q: "En 'Cenicienta', ¿cómo se llama el gato malvado de la madrastra?", options: ["Lucifer", "Félix", "Tom", "Si"], answer: 0 },
+    { q: "¿Cómo se llama la madrastra de Cenicienta?", options: ["Lady Tremaine", "Gothel", "Cruella", "Úrsula"], answer: 0 },
+    { q: "¿Qué deja Cenicienta al huir del baile a medianoche?", options: ["Una zapatilla de cristal", "Un guante", "Su corona", "Un anillo"], answer: 0 },
+    { q: "¿A qué hora se rompe el hechizo del Hada Madrina en 'Cenicienta'?", options: ["A medianoche", "Al amanecer", "A las 9 de la noche", "A las 3 de la madrugada"], answer: 0 },
+    { q: "En 'Cenicienta', ¿en qué se transforma la calabaza?", options: ["En un carruaje", "En un caballo", "En un vestido", "En un castillo"], answer: 0 },
+    // --- Blancanieves ---
+    { q: "¿Cuántos enanitos hay en 'Blancanieves'?", options: ["Cinco", "Seis", "Siete", "Ocho"], answer: 2 },
+    { q: "¿Cuál de los siete enanitos no habla?", options: ["Tontín", "Gruñón", "Dormilón", "Sabio"], answer: 0 },
+    { q: "¿Con qué envenena la reina malvada a Blancanieves?", options: ["Una manzana", "Un pastel", "Una poción", "Una uva"], answer: 0 },
+    { q: "¿Qué frase le dice la reina malvada a su espejo mágico?", options: ["Espejito, espejito", "Abracadabra", "Bibidi bobidi bú", "Hakuna matata"], answer: 0 },
+    { q: "¿Quién despierta a Blancanieves de su sueño?", options: ["Un príncipe con un beso", "Un hada", "Los enanitos", "Su madre"], answer: 0 },
+    // --- Pinocho ---
     { q: "En 'Pinocho', ¿cómo se llama el grillo que es su conciencia?", options: ["Pepito Grillo", "Cri-Kee", "Tambor", "Figaro"], answer: 0 },
-    { q: "En 'El Libro de la Selva', ¿cómo se llama el oso amigo de Mowgli?", options: ["Baloo", "Bagheera", "Shere Khan", "Louie"], answer: 0 },
-    { q: "En 'El Libro de la Selva', ¿qué animal es Bagheera?", options: ["Una pantera negra", "Un tigre", "Un oso", "Un lobo"], answer: 0 }
+    { q: "¿Qué le pasa a Pinocho cuando dice mentiras?", options: ["Le crece la nariz", "Le crecen las orejas", "Le sale cola", "Le crecen los pies"], answer: 0 },
+    { q: "¿Cómo se llama el carpintero que crea a Pinocho?", options: ["Geppetto", "Maurice", "Stromboli", "Tritón"], answer: 0 },
+    { q: "¿Cómo se llama la gigantesca ballena en 'Pinocho'?", options: ["Monstro", "Moby", "Crush", "Bruce"], answer: 0 },
+    { q: "En la Isla de los Placeres, ¿en qué se convierten los niños?", options: ["En burros", "En cerdos", "En ratones", "En ranas"], answer: 0 },
+    // --- Peter Pan ---
+    { q: "En 'Peter Pan', ¿cómo se llama el hada?", options: ["Campanita", "Hada Azul", "Hada Madrina", "Maléfica"], answer: 0 },
+    { q: "¿Quién es el villano de 'Peter Pan'?", options: ["Capitán Garfio", "Sr. Smee", "Stromboli", "Jafar"], answer: 0 },
+    { q: "¿Qué animal persigue al Capitán Garfio por haberse comido su mano?", options: ["Un cocodrilo", "Un tiburón", "Un pulpo", "Una serpiente"], answer: 0 },
+    { q: "¿Cómo se llama la tierra mágica donde vive Peter Pan?", options: ["Nunca Jamás", "Agrabah", "Arendelle", "Atlantis"], answer: 0 },
+    { q: "¿Cómo se llama el ayudante torpe del Capitán Garfio?", options: ["Sr. Smee", "LeFou", "Iago", "Pena"], answer: 0 },
+    { q: "¿Qué es lo que Peter Pan no quiere hacer nunca?", options: ["Crecer", "Volar", "Jugar", "Luchar"], answer: 0 },
+    // --- La Princesa y el Sapo ---
+    { q: "En 'La Princesa y el Sapo', ¿qué instrumento toca el cocodrilo Louis?", options: ["Trompeta", "Saxofón", "Piano", "Trombón"], answer: 0 },
+    { q: "En 'La Princesa y el Sapo', ¿cómo se llama la luciérnaga enamorada de una estrella?", options: ["Ray", "Louis", "Naveen", "Flit"], answer: 0 },
+    { q: "¿Quién es el villano brujo de 'La Princesa y el Sapo'?", options: ["Dr. Facilier", "Jafar", "Hades", "Frollo"], answer: 0 },
+    { q: "¿Cuál es el gran sueño de Tiana en 'La Princesa y el Sapo'?", options: ["Tener su propio restaurante", "Ser princesa", "Viajar por el mundo", "Ser cantante"], answer: 0 },
+    // --- Valiente ---
+    { q: "En 'Valiente' (Brave), ¿cómo se llama la princesa pelirroja y arquera?", options: ["Mérida", "Rapunzel", "Anna", "Elinor"], answer: 0 },
+    { q: "En 'Valiente', los hermanos trillizos de Mérida son Harris, Hubert y...?", options: ["Hamish", "Hamlet", "Hugo", "Henry"], answer: 0 },
+    { q: "En 'Valiente', ¿en qué animal se transforma la reina Elinor?", options: ["En oso", "En lobo", "En ciervo", "En águila"], answer: 0 },
+    { q: "¿Cuál es el arma favorita de Mérida en 'Valiente'?", options: ["Arco y flecha", "Espada", "Lanza", "Hacha"], answer: 0 },
+    // --- La Bella Durmiente ---
+    { q: "En 'La Bella Durmiente' (latino), las hadas son Flora, Fauna y... ¿la tercera?", options: ["Primavera", "Madreselva", "Azucena", "Margarita"], answer: 0 },
+    { q: "¿Cómo se llama la princesa que duerme por un hechizo en 'La Bella Durmiente'?", options: ["Aurora", "Blancanieves", "Cenicienta", "Bella"], answer: 0 },
+    { q: "¿Quién es la villana de 'La Bella Durmiente'?", options: ["Maléfica", "Úrsula", "Cruella", "Gothel"], answer: 0 },
+    { q: "En 'La Bella Durmiente', ¿con qué se pincha Aurora el dedo?", options: ["El huso de una rueca", "Una aguja", "Una espina de rosa", "Un cuchillo"], answer: 0 },
+    // --- Up ---
+    { q: "En 'Up: Una Aventura de Altura', ¿cómo se llama el anciano protagonista?", options: ["Carl", "Russell", "Dug", "Muntz"], answer: 0 },
+    { q: "En 'Up', ¿cómo se llama el niño explorador que viaja con Carl?", options: ["Russell", "Carl", "Andy", "Dug"], answer: 0 },
+    { q: "En 'Up', ¿cómo se llama el perro parlante que se une a la aventura?", options: ["Dug", "Max", "Bruno", "Slinky"], answer: 0 },
+    { q: "En 'Up', ¿cómo logra Carl hacer volar su casa?", options: ["Con miles de globos", "Con un motor", "Con magia", "Con alas"], answer: 0 },
+    // --- Wall-E ---
+    { q: "En 'Wall-E', ¿cómo se llama el pequeño robot que limpia la basura de la Tierra?", options: ["Wall-E", "EVA", "R2-D2", "Baymax"], answer: 0 },
+    { q: "En 'Wall-E', ¿cómo se llama la robot blanca exploradora?", options: ["EVA", "Wall-E", "Boo", "Vanellope"], answer: 0 },
+    { q: "En 'Wall-E', ¿qué encuentra el robot que da esperanza de regresar a la Tierra?", options: ["Una pequeña planta", "Otro robot", "Oro", "Agua"], answer: 0 },
+    // --- Ratatouille ---
+    { q: "En 'Ratatouille', ¿cómo se llama la rata que sueña con ser chef?", options: ["Remy", "Emile", "Linguini", "Django"], answer: 0 },
+    { q: "¿En qué ciudad transcurre 'Ratatouille'?", options: ["París", "Roma", "Londres", "Nueva York"], answer: 0 },
+    { q: "¿Cuál es la famosa frase del chef Gusteau en 'Ratatouille'?", options: ["Cualquiera puede cocinar", "Vive y sé feliz", "Sigue nadando", "Al infinito"], answer: 0 },
+    // --- Monsters Inc ---
+    { q: "En 'Monsters Inc.', ¿cómo se llama el monstruo grande, azul y peludo?", options: ["Sulley", "Mike", "Randall", "Boo"], answer: 0 },
+    { q: "En 'Monsters Inc.', ¿cómo se llama el monstruo verde de un solo ojo?", options: ["Mike Wazowski", "Sulley", "Randall", "Celia"], answer: 0 },
+    { q: "En 'Monsters Inc.', ¿cómo se llama la niña humana?", options: ["Boo", "Riley", "Vanellope", "Lilo"], answer: 0 },
+    { q: "En 'Monsters Inc.', ¿con qué generaban energía los monstruos al principio?", options: ["Con los gritos/sustos de los niños", "Con risas", "Con sueños", "Con electricidad"], answer: 0 },
+    // --- Intensamente (Inside Out) ---
+    { q: "En 'Intensamente' (Inside Out), ¿cómo se llama la emoción amarilla y feliz?", options: ["Alegría", "Tristeza", "Furia", "Temor"], answer: 0 },
+    { q: "En 'Intensamente', ¿cuál es la emoción de color azul?", options: ["Tristeza", "Alegría", "Desagrado", "Temor"], answer: 0 },
+    { q: "En 'Intensamente', ¿cómo se llama la niña dueña de las emociones?", options: ["Riley", "Boo", "Vanellope", "Meg"], answer: 0 },
+    { q: "En 'Intensamente', ¿cómo se llama el amigo imaginario rosado de Riley?", options: ["Bing Bong", "Dug", "Olaf", "Forky"], answer: 0 },
+    // --- Los Increíbles ---
+    { q: "En 'Los Increíbles', ¿cómo se llama el papá superhéroe?", options: ["Sr. Increíble", "Síndrome", "Dash", "Frozono"], answer: 0 },
+    { q: "En 'Los Increíbles', ¿cómo se llama la mamá superheroína elástica?", options: ["Elastigirl", "Violeta", "Edna", "Mirage"], answer: 0 },
+    { q: "En 'Los Increíbles', ¿cómo se llama la famosa diseñadora de trajes de superhéroes?", options: ["Edna Moda", "Mirage", "Elastigirl", "Violeta"], answer: 0 },
+    { q: "En 'Los Increíbles', ¿quién es el villano fan obsesionado con los superhéroes?", options: ["Síndrome", "Hades", "Lotso", "Randall"], answer: 0 },
+    // --- Cars ---
+    { q: "En 'Cars', ¿cómo se llama el auto de carreras rojo protagonista?", options: ["Rayo McQueen", "Mate", "Doc", "Chick"], answer: 0 },
+    { q: "En 'Cars', ¿cómo se llama la grúa dientona, mejor amigo de Rayo?", options: ["Mate", "Sally", "Doc", "Ramone"], answer: 0 },
+    { q: "En 'Cars', ¿cómo se llama el pueblito de la Ruta 66?", options: ["Radiador Springs", "Agrabah", "Arendelle", "Zootopia"], answer: 0 },
+    { q: "¿Qué número de carreras tiene Rayo McQueen en 'Cars'?", options: ["95", "86", "43", "1"], answer: 0 },
+    // --- Otros (Lilo & Stitch, Zootopia, Aristogatos, Dama y Vagabundo) ---
+    { q: "En 'Lilo & Stitch', ¿cómo se llama el experimento alienígena azul?", options: ["Stitch", "Dug", "Toothless", "Sonic"], answer: 0 },
+    { q: "En 'Lilo & Stitch', '¿qué significa Ohana'?", options: ["Familia", "Amistad", "Hogar", "Amor"], answer: 0 },
+    { q: "En 'Zootopia', ¿cómo se llama la coneja que se vuelve policía?", options: ["Judy Hopps", "Nick", "Flash", "Gazelle"], answer: 0 },
+    { q: "En 'Zootopia', ¿cómo se llama el zorro estafador?", options: ["Nick Wilde", "Judy", "Finnick", "Flash"], answer: 0 },
+    { q: "En 'Zootopia', ¿qué animal es Flash, el del registro civil tan lento?", options: ["Un perezoso", "Un zorro", "Un conejo", "Un guepardo"], answer: 0 },
+    { q: "En 'Los Aristogatos', ¿cómo se llama la elegante gata blanca?", options: ["Duquesa", "Marie", "Reina", "Si"], answer: 0 },
+    { q: "En 'La Dama y el Vagabundo', ¿cómo se llaman los dos gatos siameses traviesos?", options: ["Si y Am", "Jaq y Gus", "Flotsam y Jetsam", "Pena y Pánico"], answer: 0 },
+    { q: "En 'Hércules', ¿quién es el padre de Hércules, rey de los dioses?", options: ["Zeus", "Hades", "Poseidón", "Apolo"], answer: 0 },
+    { q: "En 'La Dama y el Vagabundo' (latino), ¿cómo se llama la perrita cocker protagonista?", options: ["Reina", "Duquesa", "Perdita", "Marie"], answer: 0 },
+    { q: "¿Cuál de estas princesas Disney es de Escocia?", options: ["Mérida", "Moana", "Tiana", "Jasmín"], answer: 0 }
   ];
+
+  // --- Sonidos (Web Audio, sin archivos externos: funciona offline) ---
+  let audioCtx = null;
+  function getCtx() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+  // Reproduce una secuencia de notas [{f: frecuencia, t: inicio(s), d: duración(s)}]
+  function playNotes(notes, type) {
+    const ctx = getCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    notes.forEach(n => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.value = n.f;
+      const start = now + n.t;
+      const end = start + n.d;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.25, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, end);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(end + 0.02);
+    });
+  }
+  function soundCorrect() {  // arpegio alegre ascendente
+    playNotes([{f:523,t:0,d:0.12},{f:659,t:0.10,d:0.12},{f:784,t:0.20,d:0.18}], "triangle");
+  }
+  function soundWrong() {   // dos notas graves (error)
+    playNotes([{f:196,t:0,d:0.18},{f:147,t:0.16,d:0.28}], "sawtooth");
+  }
+  function soundWin() {     // pequeña fanfarria
+    playNotes([
+      {f:523,t:0,d:0.15},{f:523,t:0.15,d:0.15},{f:523,t:0.30,d:0.15},
+      {f:659,t:0.45,d:0.20},{f:784,t:0.68,d:0.20},{f:1047,t:0.90,d:0.45}
+    ], "triangle");
+  }
 
   // Estado del juego
   let playerQuestions = [];   // playerQuestions[i] = array de 10 preguntas
@@ -247,7 +471,7 @@
 
   function startGame() {
     players.forEach(p => p.score = 0);
-    // Elige 30 preguntas distintas del banco y reparte 10 a cada jugadora
+    // Elige preguntas distintas del banco y reparte 10 a cada jugadora
     const picked = shuffle(questionBank).slice(0, players.length * QUESTIONS_PER_PLAYER);
     playerQuestions = [];
     for (let i = 0; i < players.length; i++) {
@@ -265,7 +489,6 @@
     document.getElementById("inter-screen").classList.remove("hidden");
     document.getElementById("inter-emoji").textContent = player.emoji;
     document.getElementById("inter-title").textContent = `¡Prepárate, ${player.name}!`;
-    const restantes = players.length - currentPlayer - 1;
     let aviso = "";
     if (currentPlayer > 0) aviso = "Que nadie le sople las respuestas 🤫. ";
     document.getElementById("inter-text").textContent =
@@ -330,9 +553,11 @@
     if (i === item.answer) {
       player.score++;
       fb.textContent = `✅ ¡Correcto, ${player.name}! +1 punto`;
+      soundCorrect();
     } else {
       btn.classList.add("wrong");
       fb.textContent = `❌ ¡Casi! La respuesta correcta está marcada en verde.`;
+      soundWrong();
     }
 
     renderScores();
@@ -350,7 +575,6 @@
     if (currentQ < QUESTIONS_PER_PLAYER) {
       renderQuestion();
     } else {
-      // Terminó la ronda de esta jugadora
       currentPlayer++;
       if (currentPlayer < players.length) {
         showInterstitial();
@@ -376,6 +600,7 @@
       winnerText.textContent = `¡Empate entre ${winners.map(w => w.name).join(" y ")}! 🎉`;
     }
 
+    soundWin();
     document.getElementById("final-scores").innerHTML = sorted.map((p, i) =>
       `<div class="final-row ${i === 0 ? 'first' : ''}">
          <span>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${p.emoji} ${p.name}</span>
