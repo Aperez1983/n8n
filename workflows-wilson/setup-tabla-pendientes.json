@@ -1,0 +1,54 @@
+{
+  "id": "WilsonSetupTabla001",
+  "name": "Setup — Crear tabla pendientes (ejecutar 1 vez)",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d2b8f2a0-0001-4b01-9101-bb0000000001",
+      "name": "When clicking Execute",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "pendientes",
+        "columns": {
+          "column": [
+            { "name": "tarea", "type": "string" },
+            { "name": "estado", "type": "string" },
+            { "name": "categoria", "type": "string" },
+            { "name": "persona", "type": "string" }
+          ]
+        },
+        "options": {
+          "createIfNotExists": true
+        }
+      },
+      "id": "d2b8f2a0-0002-4b02-9102-bb0000000002",
+      "name": "Crear tabla pendientes",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [240, 0]
+    }
+  ],
+  "connections": {
+    "When clicking Execute": {
+      "main": [
+        [
+          {
+            "node": "Crear tabla pendientes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
