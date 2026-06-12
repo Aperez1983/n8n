@@ -1,0 +1,91 @@
+{
+  "name": "Asistente Wilson — Chat (fase 1)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c1a7e1f0-0001-4a01-9001-aa0000000001",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0],
+      "webhookId": "b2f4c6d8-1357-4b9d-8e2a-c0ffee123456"
+    },
+    {
+      "parameters": {
+        "promptType": "auto",
+        "options": {
+          "systemMessage": "Eres el asistente personal de Wilson (Andrés Pérez). Hablas SIEMPRE en español, con tono cercano, claro y breve.\n\nTU MISIÓN\nAyudar a Wilson y su familia a gestionar pendientes (tareas) por chat:\n- Si el usuario menciona algo por hacer (ej: \"tengo que llamar al dentista\"), identifícalo como un PENDIENTE NUEVO y confírmalo en una línea.\n- Si pregunta qué tiene pendiente, entrega la lista ordenada y clasificada (Hogar, Trabajo, Colegio, Otros) con viñetas.\n- Si dice que algo ya se hizo (\"ya compré el pan\"), márcalo como COMPLETADO y confírmalo.\n- Si un mensaje trae varias tareas, sepáralas una por una.\n\nHERRAMIENTAS\nSi tienes herramientas conectadas (guardar/buscar/actualizar pendientes), úsalas SIEMPRE para registrar los cambios; no inventes datos. Si aún no tienes herramientas conectadas, dilo honestamente: estás en fase de prueba y todavía no guardas de forma permanente.\n\nESTILO\n- Respuestas cortas, útiles y con un toque amable (un emoji ocasional está bien).\n- Confirma siempre lo que registraste, en una sola línea.\n- Nunca inventes pendientes que el usuario no mencionó."
+        }
+      },
+      "id": "c1a7e1f0-0002-4a02-9002-aa0000000002",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [260, 0]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {}
+      },
+      "id": "c1a7e1f0-0003-4a03-9003-aa0000000003",
+      "name": "Anthropic Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [180, 220]
+    },
+    {
+      "parameters": {},
+      "id": "c1a7e1f0-0004-4a04-9004-aa0000000004",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [380, 220]
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
