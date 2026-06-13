@@ -28,11 +28,11 @@
           "conditions": [
             {
               "id": "f1a2b3c4-0001-0001-0001-000000000001",
-              "leftValue": "={{ $json.messages?.[0]?.from }}",
+              "leftValue": "={{ ['56956392228','56900000001','56900000002'].includes($json.messages?.[0]?.from) }}",
               "rightValue": "",
               "operator": {
-                "type": "string",
-                "operation": "exists",
+                "type": "boolean",
+                "operation": "true",
                 "singleValue": true
               }
             }
@@ -42,7 +42,7 @@
         "options": {}
       },
       "id": "e3c9a1b0-0002-4c02-9202-cc0000000002",
-      "name": "Solo mensajes entrantes",
+      "name": "Solo autorizados",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.3,
       "position": [220, 0]
@@ -188,11 +188,11 @@
     "WhatsApp Trigger": {
       "main": [
         [
-          { "node": "Solo mensajes entrantes", "type": "main", "index": 0 }
+          { "node": "Solo autorizados", "type": "main", "index": 0 }
         ]
       ]
     },
-    "Solo mensajes entrantes": {
+    "Solo autorizados": {
       "main": [
         [
           { "node": "AI Agent", "type": "main", "index": 0 }
