@@ -72,6 +72,17 @@
               },
               "renameOutput": true,
               "outputKey": "documento"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+                "conditions": [
+                  { "id": "c-audio", "leftValue": "={{ $json.messages[0].type }}", "rightValue": "audio", "operator": { "type": "string", "operation": "equals" } }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
             }
           ]
         },
@@ -204,7 +215,70 @@
       "name": "Prep otro",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
+      "position": [460, 560]
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].audio.id }}"
+      },
+      "id": "fa000000-0020-4d20-9320-dd0000000020",
+      "name": "URL audio",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
       "position": [460, 380]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "options": { "response": { "response": { "responseFormat": "file", "outputPropertyName": "data" } } }
+      },
+      "id": "fa000000-0021-4d21-9321-dd0000000021",
+      "name": "Bajar audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 380]
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  if (item.binary && item.binary.data) {\n    item.binary.data.fileName = 'audio.ogg';\n    item.binary.data.fileExtension = 'ogg';\n    item.binary.data.mimeType = 'audio/ogg';\n  }\n}\nreturn $input.all();"
+      },
+      "id": "fa000000-0022-4d22-9322-dd0000000022",
+      "name": "Fijar formato audio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 380]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "data",
+        "options": { "language": "es" }
+      },
+      "id": "fa000000-0023-4d23-9323-dd0000000023",
+      "name": "Transcribir audio",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1120, 380]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "a-audio", "name": "consulta", "value": "=El usuario envió una nota de voz por WhatsApp. Esto es lo que dijo (transcripción): {{ $json.text }}\n\nProcésalo como si lo hubiera escrito.", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fa000000-0024-4d24-9324-dd0000000024",
+      "name": "Prep audio",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 380]
     },
     {
       "parameters": {
@@ -328,9 +402,15 @@
         [{ "node": "Prep texto", "type": "main", "index": 0 }],
         [{ "node": "URL imagen", "type": "main", "index": 0 }],
         [{ "node": "URL pdf", "type": "main", "index": 0 }],
+        [{ "node": "URL audio", "type": "main", "index": 0 }],
         [{ "node": "Prep otro", "type": "main", "index": 0 }]
       ]
     },
+    "URL audio": { "main": [[{ "node": "Bajar audio", "type": "main", "index": 0 }]] },
+    "Bajar audio": { "main": [[{ "node": "Fijar formato audio", "type": "main", "index": 0 }]] },
+    "Fijar formato audio": { "main": [[{ "node": "Transcribir audio", "type": "main", "index": 0 }]] },
+    "Transcribir audio": { "main": [[{ "node": "Prep audio", "type": "main", "index": 0 }]] },
+    "Prep audio": { "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]] },
     "URL imagen": { "main": [[{ "node": "Bajar imagen", "type": "main", "index": 0 }]] },
     "Bajar imagen": { "main": [[{ "node": "Prep imagen", "type": "main", "index": 0 }]] },
     "URL pdf": { "main": [[{ "node": "Bajar pdf", "type": "main", "index": 0 }]] },
