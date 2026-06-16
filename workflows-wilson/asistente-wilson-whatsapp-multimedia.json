@@ -296,7 +296,7 @@
     },
     {
       "parameters": {
-        "model": { "__rl": true, "mode": "id", "value": "claude-sonnet-4-6" },
+        "model": { "__rl": true, "mode": "id", "value": "claude-haiku-4-5-20251001" },
         "options": {}
       },
       "id": "fa000000-0014-4d14-9314-dd0000000014",
@@ -308,7 +308,8 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('WhatsApp Trigger').item.json.messages?.[0]?.from }}"
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.messages?.[0]?.from }}",
+        "contextWindowLength": 6
       },
       "id": "fa000000-0015-4d15-9315-dd0000000015",
       "name": "Simple Memory",
@@ -345,8 +346,8 @@
         "resource": "row",
         "operation": "get",
         "dataTableId": { "__rl": true, "mode": "name", "value": "pendientes" },
-        "matchType": "anyCondition",
-        "filters": {},
+        "matchType": "allConditions",
+        "filters": { "conditions": [ { "keyName": "estado", "condition": "eq", "keyValue": "pendiente" } ] },
         "returnAll": true
       },
       "id": "fa000000-0017-4d17-9317-dd0000000017",
