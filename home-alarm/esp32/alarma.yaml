@@ -1,0 +1,127 @@
+# Firmware ESPHome para el puente ESP32 <-> panel de alarma
+#
+# - GPIO23: relé que pulsa la zona keyswitch (armar/desarmar)
+# - GPIO32: entrada aislada (PC817) desde la salida PGM "Armed Status"
+# - GPIO33: entrada aislada (PC817) desde la salida de sirena (BELL)
+#
+# Comandos MQTT (topic casa/alarma/cmd):
+#   ARMAR    -> pulsa el keyswitch solo si la alarma está desarmada
+#   DESARMAR -> pulsa el keyswitch solo si la alarma está armada
+#   ESTADO   -> re-publica el estado actual
+#
+# Estados publicados (retenidos):
+#   casa/alarma/estado/armada  -> ON / OFF
+#   casa/alarma/estado/sirena  -> ON / OFF
+
+esphome:
+  name: alarma-casa
+  friendly_name: Alarma Casa
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  # Si no logra conectarse al WiFi, levanta su propia red para reconfigurarlo
+  ap:
+    ssid: "Alarma-Casa Fallback"
+    password: !secret ap_password
+
+captive_portal:
+
+mqtt:
+  broker: !secret mqtt_broker
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: casa/alarma
+  birth_message:
+    topic: casa/alarma/estado/online
+    payload: "ON"
+    retain: true
+  will_message:
+    topic: casa/alarma/estado/online
+    payload: "OFF"
+    retain: true
+  on_message:
+    - topic: casa/alarma/cmd
+      payload: "ARMAR"
+      then:
+        - if:
+            condition:
+              binary_sensor.is_off: alarma_armada
+            then:
+              - switch.turn_on: pulso_keyswitch
+    - topic: casa/alarma/cmd
+      payload: "DESARMAR"
+      then:
+        - if:
+            condition:
+              binary_sensor.is_on: alarma_armada
+            then:
+              - switch.turn_on: pulso_keyswitch
+    - topic: casa/alarma/cmd
+      payload: "ESTADO"
+      then:
+        - lambda: |-
+            id(alarma_armada).publish_state(id(alarma_armada).state);
+            id(sirena_sonando).publish_state(id(sirena_sonando).state);
+
+switch:
+  # Relé conectado (contactos NO) en paralelo con la zona keyswitch.
+  # Pulso de 1 segundo = girar la "llave" momentánea.
+  - platform: gpio
+    id: pulso_keyswitch
+    name: "Pulso Keyswitch"
+    pin: GPIO23
+    restore_mode: ALWAYS_OFF
+    on_turn_on:
+      - delay: 1s
+      - switch.turn_off: pulso_keyswitch
+
+binary_sensor:
+  # PGM del panel programada como "Armed Status", vía optoacoplador PC817.
+  # El fototransistor lleva el GPIO a tierra cuando la PGM está activa.
+  - platform: gpio
+    id: alarma_armada
+    name: "Alarma Armada"
+    pin:
+      number: GPIO32
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 200ms
+      - delayed_off: 200ms
+    state_topic: casa/alarma/estado/armada
+    retain: true
+
+  # Salida de sirena (BELL) del panel, vía optoacoplador PC817.
+  - platform: gpio
+    id: sirena_sonando
+    name: "Sirena Sonando"
+    pin:
+      number: GPIO33
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 500ms
+      - delayed_off: 2s
+    state_topic: casa/alarma/estado/sirena
+    retain: true
+
+status_led:
+  pin:
+    number: GPIO2

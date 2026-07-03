@@ -1,0 +1,198 @@
+{
+  "name": "Alarma - Notificaciones",
+  "nodes": [
+    {
+      "parameters": {
+        "topics": "casa/alarma/estado/armada,casa/alarma/estado/sirena,casa/alarma/estado/online",
+        "options": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000001",
+      "name": "MQTT Trigger",
+      "type": "n8n-nodes-base.mqttTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-sirena",
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "casa/alarma/estado/sirena",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "id": "ev-sirena-on",
+                    "leftValue": "={{ $json.message }}",
+                    "rightValue": "ON",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "sirena"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-armada",
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "casa/alarma/estado/armada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "armada"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ev-offline",
+                    "leftValue": "={{ $json.topic }}",
+                    "rightValue": "casa/alarma/estado/online",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  },
+                  {
+                    "id": "ev-offline-off",
+                    "leftValue": "={{ $json.message }}",
+                    "rightValue": "OFF",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "offline"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000002",
+      "name": "¿Qué pasó?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_CHAT_ID_AQUI",
+        "text": "🚨🚨 ¡LA ALARMA ESTÁ SONANDO! 🚨🚨\n\nRevisa las cámaras o llama a un vecino/carabineros (133) antes de acercarte.",
+        "additionalFields": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000003",
+      "name": "Telegram: ¡Sirena!",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [440, -160]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_CHAT_ID_AQUI",
+        "text": "={{ $json.message === 'ON' ? '🔒 Alarma ARMADA' : '🔓 Alarma DESARMADA' }}",
+        "additionalFields": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000004",
+      "name": "Telegram: Cambio de estado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "TU_CHAT_ID_AQUI",
+        "text": "⚠️ El módulo ESP32 de la alarma se desconectó (¿corte de luz o de WiFi?). El panel sigue funcionando de forma autónoma, pero no hay control remoto hasta que vuelva.",
+        "additionalFields": {}
+      },
+      "id": "b2000000-0000-4000-8000-000000000005",
+      "name": "Telegram: Módulo offline",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [440, 160]
+    }
+  ],
+  "connections": {
+    "MQTT Trigger": {
+      "main": [
+        [
+          {
+            "node": "¿Qué pasó?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Qué pasó?": {
+      "main": [
+        [
+          {
+            "node": "Telegram: ¡Sirena!",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Cambio de estado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Módulo offline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}
