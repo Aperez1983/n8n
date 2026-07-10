@@ -57,6 +57,28 @@
   }
   .player-chip .emoji { font-size: 1.6rem; }
   .player-chip .name { font-weight: bold; font-size: 1.1rem; flex: 1; }
+  /* Configuración de jugadores editable */
+  .setup-label { text-align: center; font-weight: bold; margin-bottom: 12px; font-size: 1rem; }
+  .players-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .player-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 14px; }
+  .player-row .emoji { font-size: 1.5rem; }
+  .player-row input {
+    flex: 1; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25);
+    color: #fff; padding: 10px 12px; border-radius: 10px; font-size: 1rem; font-family: inherit;
+  }
+  .player-row input:focus { outline: none; border-color: #ffd700; }
+  .player-row input::placeholder { color: rgba(255,255,255,0.5); }
+  .player-row .remove {
+    background: rgba(231,76,60,0.85); color: #fff; width: 34px; height: 34px;
+    border-radius: 8px; font-size: 1.1rem; line-height: 1; flex-shrink: 0; font-weight: bold;
+  }
+  .player-row .remove:hover { background: #e74c3c; }
+  .btn-add {
+    width: 100%; padding: 12px; font-size: 0.98rem; font-weight: bold;
+    background: rgba(255,255,255,0.18); color: #fff; border-radius: 12px; margin-bottom: 18px;
+  }
+  .btn-add:hover { background: rgba(255,255,255,0.3); }
+  .btn-add:disabled { opacity: 0.4; cursor: default; }
   button {
     font-family: inherit; cursor: pointer; border: none;
     transition: transform 0.12s ease, box-shadow 0.12s ease;
@@ -123,13 +145,11 @@
   <!-- PANTALLA DE INICIO -->
   <div id="start-screen">
     <h1>✨ Trivia Disney · Nivel Experto ✨</h1>
-    <p class="subtitle">200 preguntas difíciles · cada jugadora responde sus 10, una detrás de la otra</p>
-    <div class="players-setup">
-      <div class="player-chip"><span class="emoji">👧</span><span class="name">Maite</span></div>
-      <div class="player-chip"><span class="emoji">🧒</span><span class="name">Isidora</span></div>
-      <div class="player-chip"><span class="emoji">👑</span><span class="name">Mamá</span></div>
-    </div>
-    <p class="subtitle">Cada partida elige 30 preguntas al azar del banco de 200. ¡Que gane la verdadera fan!</p>
+    <p class="subtitle">200 preguntas difíciles · cada jugador@ responde sus 10, una detrás de la otra</p>
+    <p class="setup-label">¿Quiénes juegan? Escriban sus nombres 👇</p>
+    <div class="players-inputs" id="players-inputs"></div>
+    <button class="btn-add" id="add-player-btn" onclick="addPlayerRow()">➕ Agregar jugador@</button>
+    <p class="subtitle">Cada partida elige preguntas al azar del banco de 200. ¡Que gane quien más sepa de Disney!</p>
     <button class="btn-primary" onclick="startGame()">🎬 ¡Empezar la trivia!</button>
   </div>
 
@@ -169,11 +189,51 @@
 <script>
   const QUESTIONS_PER_PLAYER = 10;
 
-  const players = [
-    { name: "Maite", emoji: "👧", score: 0 },
-    { name: "Isidora", emoji: "🧒", score: 0 },
-    { name: "Mamá", emoji: "👑", score: 0 }
-  ];
+  // Jugadores: se arman desde la pantalla de inicio (cualquiera puede jugar)
+  let players = [];
+  const EMOJIS = ["👧","🧒","👑","🦸‍♀️","🧙‍♀️","🦁","🐭","🐤","🌟","🎀","🦄","🐯","🏰","🧚‍♀️","👸","🤴","🐣","🐰","🦋","⭐"];
+  const DEFAULT_NAMES = ["Maite", "Isidora", "Arline"];
+  const MAX_PLAYERS = 20;
+
+  // Crea una fila de nombre en la pantalla de inicio
+  function addPlayerRow(name) {
+    const box = document.getElementById("players-inputs");
+    if (box.children.length >= MAX_PLAYERS) return;
+    const row = document.createElement("div");
+    row.className = "player-row";
+    row.innerHTML =
+      `<span class="emoji"></span>
+       <input type="text" maxlength="20" placeholder="Nombre del jugador@" value="${name ? name.replace(/"/g, '&quot;') : ''}">
+       <button class="remove" title="Quitar" onclick="removePlayerRow(this)">✕</button>`;
+    box.appendChild(row);
+    refreshRows();
+  }
+
+  function removePlayerRow(btn) {
+    const box = document.getElementById("players-inputs");
+    if (box.children.length <= 1) return; // siempre al menos 1 jugador@
+    btn.closest(".player-row").remove();
+    refreshRows();
+  }
+
+  // Actualiza los emojis por posición y habilita/deshabilita botones
+  function refreshRows() {
+    const box = document.getElementById("players-inputs");
+    const rows = box.querySelectorAll(".player-row");
+    rows.forEach((row, i) => {
+      row.querySelector(".emoji").textContent = EMOJIS[i % EMOJIS.length];
+      const rm = row.querySelector(".remove");
+      rm.style.visibility = rows.length <= 1 ? "hidden" : "visible";
+    });
+    document.getElementById("add-player-btn").disabled = rows.length >= MAX_PLAYERS;
+  }
+
+  // Inicializa la pantalla de inicio con los nombres por defecto
+  function initSetup() {
+    const box = document.getElementById("players-inputs");
+    box.innerHTML = "";
+    DEFAULT_NAMES.forEach(n => addPlayerRow(n));
+  }
 
   // Banco de 200 preguntas difíciles de Disney y Pixar
   const questionBank = [
@@ -470,9 +530,20 @@
   }
 
   function startGame() {
-    players.forEach(p => p.score = 0);
-    // Elige preguntas distintas del banco y reparte 10 a cada jugadora
-    const picked = shuffle(questionBank).slice(0, players.length * QUESTIONS_PER_PLAYER);
+    // Lee los nombres escritos en la pantalla de inicio
+    const inputs = document.querySelectorAll("#players-inputs input");
+    players = [];
+    inputs.forEach((inp, i) => {
+      const name = inp.value.trim() || `Jugador@ ${i + 1}`;
+      players.push({ name: name, emoji: EMOJIS[i % EMOJIS.length], score: 0 });
+    });
+    if (players.length === 0) { alert("Escribe al menos un nombre para jugar 🎬"); return; }
+
+    // Reparte 10 preguntas por jugador@ (sin repetir; si hay muchos jugadores, vuelve a barajar)
+    const need = players.length * QUESTIONS_PER_PLAYER;
+    let pool = [];
+    while (pool.length < need) pool = pool.concat(shuffle(questionBank));
+    const picked = pool.slice(0, need);
     playerQuestions = [];
     for (let i = 0; i < players.length; i++) {
       playerQuestions.push(picked.slice(i * QUESTIONS_PER_PLAYER, (i + 1) * QUESTIONS_PER_PLAYER));
@@ -595,7 +666,7 @@
 
     const winnerText = document.getElementById("winner-text");
     if (winners.length === 1) {
-      winnerText.textContent = `¡${winners[0].name} es la reina de Disney! 🎉`;
+      winnerText.textContent = `¡${winners[0].name} gana la corona de Disney! 🎉`;
     } else {
       winnerText.textContent = `¡Empate entre ${winners.map(w => w.name).join(" y ")}! 🎉`;
     }
@@ -613,6 +684,9 @@
     document.getElementById("end-screen").classList.add("hidden");
     document.getElementById("start-screen").classList.remove("hidden");
   }
+
+  // Inicializa la pantalla de inicio al cargar la página
+  initSetup();
 </script>
 </body>
 </html>
